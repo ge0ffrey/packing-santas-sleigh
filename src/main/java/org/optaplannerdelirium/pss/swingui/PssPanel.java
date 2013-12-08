@@ -27,7 +27,7 @@ public class PssPanel extends SolutionPanel {
 
     public void resetPanel(Solution solution) {
         Sleigh sleigh = (Sleigh) solution;
-        updatePanel(solution);
+
     }
 
 }

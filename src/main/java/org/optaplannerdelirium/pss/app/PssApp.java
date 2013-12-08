@@ -19,9 +19,11 @@ package org.optaplannerdelirium.pss.app;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
 import org.optaplanner.examples.common.app.CommonApp;
+import org.optaplanner.examples.common.persistence.AbstractSolutionImporter;
 import org.optaplanner.examples.common.persistence.SolutionDao;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
 import org.optaplannerdelirium.pss.persistence.PssDao;
+import org.optaplannerdelirium.pss.persistence.PssImporter;
 import org.optaplannerdelirium.pss.swingui.PssPanel;
 
 public class PssApp extends CommonApp {
@@ -54,6 +56,11 @@ public class PssApp extends CommonApp {
     @Override
     protected SolutionDao createSolutionDao() {
         return new PssDao();
+    }
+
+    @Override
+    protected AbstractSolutionImporter createSolutionImporter() {
+        return new PssImporter();
     }
 
 }
