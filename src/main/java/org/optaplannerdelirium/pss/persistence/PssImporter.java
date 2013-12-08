@@ -59,6 +59,9 @@ public class PssImporter extends AbstractTxtSolutionImporter {
             readPresentList();
             createAnchorAllocation();
             createPresentAllocationList();
+            logger.info("Sleigh {} has {} presents.",
+                    getInputId(),
+                    sleigh.getPresentList().size());
 //            BigInteger possibleSolutionSize = factorial(sleigh.getPresentList().size());
 //            logger.info("Sleigh {} has {} presents with a search space of {}.",
 //                    getInputId(),
