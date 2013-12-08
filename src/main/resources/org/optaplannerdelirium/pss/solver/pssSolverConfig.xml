@@ -2,6 +2,7 @@
 <solver>
   <solutionClass>org.optaplannerdelirium.pss.domain.Sleigh</solutionClass>
   <planningEntityClass>org.optaplannerdelirium.pss.domain.PresentAllocation</planningEntityClass>
+  <planningEntityClass>org.optaplannerdelirium.pss.domain.Allocation</planningEntityClass>
 
   <scoreDirectorFactory>
     <scoreDefinitionType>SIMPLE</scoreDefinitionType>

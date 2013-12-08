@@ -26,9 +26,12 @@ import org.optaplanner.examples.common.domain.AbstractPersistable;
 public class PresentAllocation extends AbstractPersistable implements Allocation {
 
     private Present present;
-    
+
     // Planning variables: changes during planning, between score calculations.
     private Allocation previousAllocation;
+
+    // Shadow variables
+    private PresentAllocation nextPresentAllocation;
 
     public Present getPresent() {
         return present;
@@ -45,6 +48,14 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
 
     public void setPreviousAllocation(Allocation previousAllocation) {
         this.previousAllocation = previousAllocation;
+    }
+
+    public PresentAllocation getNextPresentAllocation() {
+        return nextPresentAllocation;
+    }
+
+    public void setNextPresentAllocation(PresentAllocation nextPresentAllocation) {
+        this.nextPresentAllocation = nextPresentAllocation;
     }
 
     // ************************************************************************

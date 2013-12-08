@@ -22,6 +22,16 @@ import org.optaplanner.examples.common.domain.AbstractPersistable;
 @XStreamAlias("PssAnchor")
 public class AnchorAllocation extends AbstractPersistable implements Allocation {
 
+    private PresentAllocation nextPresentAllocation;
+
+    public PresentAllocation getNextPresentAllocation() {
+        return nextPresentAllocation;
+    }
+
+    public void setNextPresentAllocation(PresentAllocation nextPresentAllocation) {
+        this.nextPresentAllocation = nextPresentAllocation;
+    }
+
     // ************************************************************************
     // Complex methods
     // ************************************************************************

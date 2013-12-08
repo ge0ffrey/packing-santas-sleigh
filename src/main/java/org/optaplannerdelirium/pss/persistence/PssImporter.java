@@ -102,6 +102,7 @@ public class PssImporter extends AbstractTxtSolutionImporter {
                 presentAllocation.setId(present.getId());
                 presentAllocation.setPresent(present);
                 presentAllocation.setPreviousAllocation(previousAllocation);
+                previousAllocation.setNextPresentAllocation(presentAllocation);
                 presentAllocationList.add(presentAllocation);
                 previousAllocation = presentAllocation;
             }

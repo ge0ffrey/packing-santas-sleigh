@@ -16,6 +16,14 @@
 
 package org.optaplannerdelirium.pss.domain;
 
+import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.variable.PlanningVariable;
+
+@PlanningEntity
 public interface Allocation {
+
+    @PlanningVariable(mappedBy = "previousAllocation")
+    PresentAllocation getNextPresentAllocation();
+    void setNextPresentAllocation(PresentAllocation nextPresentAllocation);
 
 }
