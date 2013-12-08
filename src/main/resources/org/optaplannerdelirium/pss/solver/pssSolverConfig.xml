@@ -14,7 +14,11 @@
   <!--</termination>-->
   <localSearch>
     <unionMoveSelector>
-      <changeMoveSelector/>
+      <changeMoveSelector>
+        <entitySelector>
+          <cacheType>PHASE</cacheType>
+        </entitySelector>
+      </changeMoveSelector>
       <!--<subChainChangeMoveSelector>-->
         <!--<subChainSelector>-->
           <!--<maximumSubChainSize>20</maximumSubChainSize>-->
