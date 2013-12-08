@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 JBoss Inc
+ * Copyright 2013 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.optaplannerdelirium.pss.persistence;
+package org.optaplannerdelirium.pss.solver.score;
 
-import org.optaplanner.examples.common.persistence.XStreamSolutionDao;
+import org.optaplanner.core.api.score.buildin.simple.SimpleScore;
+import org.optaplanner.core.impl.score.director.simple.SimpleScoreCalculator;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 
-public class PssDao extends XStreamSolutionDao {
+public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
 
-    public PssDao() {
-        super("pss", Sleigh.class);
+    public SimpleScore calculateScore(Sleigh sleigh) {
+        return SimpleScore.valueOf(0);
     }
 
 }

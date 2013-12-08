@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 JBoss Inc
+ * Copyright 2010 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package org.optaplannerdelirium.pss.persistence;
+package org.optaplannerdelirium.pss.swingui;
 
-import org.optaplanner.examples.common.persistence.XStreamSolutionDao;
+import org.optaplanner.core.impl.solution.Solution;
+import org.optaplanner.examples.common.swingui.SolutionPanel;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 
-public class PssDao extends XStreamSolutionDao {
+public class PssPanel extends SolutionPanel {
 
-    public PssDao() {
-        super("pss", Sleigh.class);
+    public PssPanel() {
+    }
+
+    public void resetPanel(Solution solution) {
+        Sleigh sleigh = (Sleigh) solution;
+        updatePanel(solution);
     }
 
 }

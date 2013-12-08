@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <solutionClass>org.optaplannerdelirium.pss.domain.Sleigh</solutionClass>
+  <planningEntityClass>org.optaplannerdelirium.pss.domain.PresentAllocation</planningEntityClass>
+
+  <scoreDirectorFactory>
+    <scoreDefinitionType>SIMPLE</scoreDefinitionType>
+    <simpleScoreCalculatorClass>org.optaplannerdelirium.pss.solver.score.PssScoreCalculator</simpleScoreCalculatorClass>
+  </scoreDirectorFactory>
+
+  <!--<termination>-->
+    <!--<maximumMinutesSpend>2</maximumMinutesSpend>-->
+  <!--</termination>-->
+  <localSearch>
+    <unionMoveSelector>
+      <changeMoveSelector/>
+      <!--<subChainChangeMoveSelector>-->
+        <!--<subChainSelector>-->
+          <!--<maximumSubChainSize>20</maximumSubChainSize>-->
+        <!--</subChainSelector>-->
+        <!--<selectReversingMoveToo>false</selectReversingMoveToo>-->
+      <!--</subChainChangeMoveSelector>-->
+    </unionMoveSelector>
+    <acceptor>
+      <lateAcceptanceSize>200</lateAcceptanceSize>
+    </acceptor>
+    <forager>
+      <acceptedCountLimit>1</acceptedCountLimit>
+    </forager>
+  </localSearch>
+</solver>
