@@ -9,7 +9,7 @@
     <version>6.1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.optaplannerdelirium.packingsantassleigh</groupId>
+  <groupId>org.optaplannerdelirium.pss</groupId>
   <artifactId>packing-santas-sleigh</artifactId>
 
   <name>Packing Santa's sleigh</name>
