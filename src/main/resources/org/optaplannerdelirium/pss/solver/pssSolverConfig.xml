@@ -18,6 +18,17 @@
         <entitySelector>
           <cacheType>PHASE</cacheType>
         </entitySelector>
+        <valueSelector>
+          <variableName>rotation</variableName>
+        </valueSelector>
+      </changeMoveSelector>
+      <changeMoveSelector>
+        <entitySelector>
+          <cacheType>PHASE</cacheType>
+        </entitySelector>
+        <valueSelector>
+          <variableName>previousAllocation</variableName>
+        </valueSelector>
       </changeMoveSelector>
       <!--<subChainChangeMoveSelector>-->
         <!--<subChainSelector>-->
