@@ -18,11 +18,24 @@ package org.optaplannerdelirium.pss.solver.score;
 
 import org.optaplanner.core.api.score.buildin.simple.SimpleScore;
 import org.optaplanner.core.impl.score.director.simple.SimpleScoreCalculator;
+import org.optaplannerdelirium.pss.domain.AnchorAllocation;
+import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 
 public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
 
+    public static final int SLEIGH_X = 1000;
+    public static final int SLEIGH_Z = 1000;
+
     public SimpleScore calculateScore(Sleigh sleigh) {
+        AnchorAllocation anchorAllocation = sleigh.getAnchorAllocation();
+        PresentAllocation presentAllocation = anchorAllocation.getNextPresentAllocation();
+        int[][] ground = new int[SLEIGH_X][SLEIGH_Z];
+        while (presentAllocation != null) {
+
+            presentAllocation = presentAllocation.getNextPresentAllocation();
+        }
+
         return SimpleScore.valueOf(0);
     }
 

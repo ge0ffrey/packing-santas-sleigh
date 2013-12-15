@@ -26,6 +26,7 @@ import org.optaplannerdelirium.pss.domain.Allocation;
 import org.optaplannerdelirium.pss.domain.AnchorAllocation;
 import org.optaplannerdelirium.pss.domain.Present;
 import org.optaplannerdelirium.pss.domain.PresentAllocation;
+import org.optaplannerdelirium.pss.domain.Rotation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 
 public class PssImporter extends AbstractTxtSolutionImporter {
@@ -101,6 +102,7 @@ public class PssImporter extends AbstractTxtSolutionImporter {
                 PresentAllocation presentAllocation = new PresentAllocation();
                 presentAllocation.setId(present.getId());
                 presentAllocation.setPresent(present);
+                presentAllocation.setRotation(Rotation.AXBYCZ);
                 presentAllocation.setPreviousAllocation(previousAllocation);
                 previousAllocation.setNextPresentAllocation(presentAllocation);
                 presentAllocationList.add(presentAllocation);

@@ -28,6 +28,7 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
     private Present present;
 
     // Planning variables: changes during planning, between score calculations.
+    private Rotation rotation;
     private Allocation previousAllocation;
 
     // Shadow variables
@@ -39,6 +40,15 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
 
     public void setPresent(Present present) {
         this.present = present;
+    }
+
+    @PlanningVariable(valueRangeProviderRefs = {"rotationRange"})
+    public Rotation getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(Rotation rotation) {
+        this.rotation = rotation;
     }
 
     @PlanningVariable(chained = true, valueRangeProviderRefs = {"anchorAllocationRange", "presentAllocationRange"})
@@ -61,6 +71,54 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
     // ************************************************************************
     // Complex methods
     // ************************************************************************
+
+    public int getX() {
+        switch (rotation) {
+            case AXBYCZ:
+            case AXBZCY:
+                return present.getA();
+            case AYBXCZ:
+            case AZBXCY:
+                return present.getB();
+            case AYBZCX:
+            case AZBYCX:
+                return present.getC();
+            default:
+                throw new IllegalStateException("The rotation (" + rotation + ") is not implemented.");
+        }
+    }
+
+    public int getY() {
+        switch (rotation) {
+            case AYBXCZ:
+            case AYBZCX:
+                return present.getA();
+            case AXBYCZ:
+            case AZBYCX:
+                return present.getB();
+            case AXBZCY:
+            case AZBXCY:
+                return present.getC();
+            default:
+                throw new IllegalStateException("The rotation (" + rotation + ") is not implemented.");
+        }
+    }
+
+    public int getZ() {
+        switch (rotation) {
+            case AZBXCY:
+            case AZBYCX:
+                return present.getA();
+            case AXBZCY:
+            case AYBZCX:
+                return present.getB();
+            case AXBYCZ:
+            case AYBXCZ:
+                return present.getC();
+            default:
+                throw new IllegalStateException("The rotation (" + rotation + ") is not implemented.");
+        }
+    }
 
     @Override
     public String toString() {

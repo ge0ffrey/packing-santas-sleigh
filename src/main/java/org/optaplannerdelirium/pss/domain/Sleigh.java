@@ -17,6 +17,7 @@
 package org.optaplannerdelirium.pss.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -69,6 +70,11 @@ public class Sleigh extends AbstractPersistable implements Solution<SimpleScore>
     @ValueRangeProvider(id = "presentAllocationRange")
     public List<PresentAllocation> getPresentAllocationList() {
         return presentAllocationList;
+    }
+
+    @ValueRangeProvider(id = "rotationRange")
+    public List<Rotation> getRotationList() {
+        return Arrays.asList(Rotation.values());
     }
 
     public void setPresentAllocationList(List<PresentAllocation> presentAllocationList) {
