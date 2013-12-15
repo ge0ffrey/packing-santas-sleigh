@@ -25,7 +25,7 @@
     <!--</encoder>-->
   <!--</appender>-->
 
-  <logger name="org.optaplanner" level="info"/>
+  <logger name="org.optaplanner" level="debug"/>
   <logger name="org.optaplannerdelirium" level="info"/>
 
   <root level="warn">

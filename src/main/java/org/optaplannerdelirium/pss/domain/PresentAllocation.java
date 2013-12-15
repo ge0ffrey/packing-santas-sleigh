@@ -72,7 +72,7 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
     // Complex methods
     // ************************************************************************
 
-    public int getX() {
+    public int getXLength() {
         switch (rotation) {
             case AXBYCZ:
             case AXBZCY:
@@ -88,7 +88,7 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
         }
     }
 
-    public int getY() {
+    public int getYLength() {
         switch (rotation) {
             case AYBXCZ:
             case AYBZCX:
@@ -104,7 +104,7 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
         }
     }
 
-    public int getZ() {
+    public int getZLength() {
         switch (rotation) {
             case AZBXCY:
             case AZBYCX:

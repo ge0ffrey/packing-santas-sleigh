@@ -30,9 +30,9 @@ public class PresentAllocationTest {
         PresentAllocation presentAllocation = new PresentAllocation();
         presentAllocation.setPresent(present);
         presentAllocation.setRotation(Rotation.AXBYCZ);
-        Assert.assertEquals(3, presentAllocation.getX());
-        Assert.assertEquals(5, presentAllocation.getY());
-        Assert.assertEquals(7, presentAllocation.getZ());
+        Assert.assertEquals(3, presentAllocation.getXLength());
+        Assert.assertEquals(5, presentAllocation.getYLength());
+        Assert.assertEquals(7, presentAllocation.getZLength());
     }
 
     @Test
@@ -44,9 +44,9 @@ public class PresentAllocationTest {
         PresentAllocation presentAllocation = new PresentAllocation();
         presentAllocation.setPresent(present);
         presentAllocation.setRotation(Rotation.AXBZCY);
-        Assert.assertEquals(3, presentAllocation.getX());
-        Assert.assertEquals(7, presentAllocation.getY());
-        Assert.assertEquals(5, presentAllocation.getZ());
+        Assert.assertEquals(3, presentAllocation.getXLength());
+        Assert.assertEquals(7, presentAllocation.getYLength());
+        Assert.assertEquals(5, presentAllocation.getZLength());
     }
 
     @Test
@@ -58,9 +58,9 @@ public class PresentAllocationTest {
         PresentAllocation presentAllocation = new PresentAllocation();
         presentAllocation.setPresent(present);
         presentAllocation.setRotation(Rotation.AYBXCZ);
-        Assert.assertEquals(5, presentAllocation.getX());
-        Assert.assertEquals(3, presentAllocation.getY());
-        Assert.assertEquals(7, presentAllocation.getZ());
+        Assert.assertEquals(5, presentAllocation.getXLength());
+        Assert.assertEquals(3, presentAllocation.getYLength());
+        Assert.assertEquals(7, presentAllocation.getZLength());
     }
 
     @Test
@@ -72,9 +72,9 @@ public class PresentAllocationTest {
         PresentAllocation presentAllocation = new PresentAllocation();
         presentAllocation.setPresent(present);
         presentAllocation.setRotation(Rotation.AYBZCX);
-        Assert.assertEquals(7, presentAllocation.getX());
-        Assert.assertEquals(3, presentAllocation.getY());
-        Assert.assertEquals(5, presentAllocation.getZ());
+        Assert.assertEquals(7, presentAllocation.getXLength());
+        Assert.assertEquals(3, presentAllocation.getYLength());
+        Assert.assertEquals(5, presentAllocation.getZLength());
     }
 
     @Test
@@ -86,9 +86,9 @@ public class PresentAllocationTest {
         PresentAllocation presentAllocation = new PresentAllocation();
         presentAllocation.setPresent(present);
         presentAllocation.setRotation(Rotation.AZBXCY);
-        Assert.assertEquals(5, presentAllocation.getX());
-        Assert.assertEquals(7, presentAllocation.getY());
-        Assert.assertEquals(3, presentAllocation.getZ());
+        Assert.assertEquals(5, presentAllocation.getXLength());
+        Assert.assertEquals(7, presentAllocation.getYLength());
+        Assert.assertEquals(3, presentAllocation.getZLength());
     }
 
     @Test
@@ -100,9 +100,9 @@ public class PresentAllocationTest {
         PresentAllocation presentAllocation = new PresentAllocation();
         presentAllocation.setPresent(present);
         presentAllocation.setRotation(Rotation.AZBYCX);
-        Assert.assertEquals(7, presentAllocation.getX());
-        Assert.assertEquals(5, presentAllocation.getY());
-        Assert.assertEquals(3, presentAllocation.getZ());
+        Assert.assertEquals(7, presentAllocation.getXLength());
+        Assert.assertEquals(5, presentAllocation.getYLength());
+        Assert.assertEquals(3, presentAllocation.getZLength());
     }
 
 }
