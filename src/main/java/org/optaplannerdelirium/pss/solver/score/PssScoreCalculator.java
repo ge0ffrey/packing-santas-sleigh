@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.optaplanner.core.api.score.buildin.simple.SimpleScore;
 import org.optaplanner.core.impl.score.director.simple.SimpleScoreCalculator;
@@ -44,28 +48,29 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         List<Point> cornerList = new ArrayList<Point>(SLEIGH_X * SLEIGH_Y);
         cornerList.add(ground[0][0]);
         while (presentAllocation != null) {
-            for (Iterator<Point> it = cornerList.iterator(); it.hasNext(); ) {
-                Point corner = it.next();
-
-
-//                ggg
-//                if (fits(presentAllocation, corner, ground)) {
-//                    int xEnd = corner.x + presentAllocation.getXLength();
-//                    int yEnd = corner.y + presentAllocation.getYLength();
-//                    int zEnd = corner.z + presentAllocation.getZLength();
-//                    for (int x = corner.x; x < xEnd; x++) {
-//                        for (int y = corner.y; y < yEnd; y++) {
-//                            ground[x][y] = zEnd;
-//                        }
-//                    }
-//                    it.remove();
-//                    cornerList.add(new Point(corner.x, corner.y, zEnd));
-//                    // todo add new cornerList
-//
-//                    break;
-//                }
+            int z = cornerList.get(0).z - 1;
+            Point winner = null;
+            while (winner == null) {
+                z++;
+                for (Point corner : cornerList) {
+                    if (corner.z > z) {
+                        continue;
+                    }
+                    if (fits(ground, presentAllocation, corner.x, corner.y, z)) {
+                        winner = corner;
+                    }
+                }
             }
-            Collections.sort(cornerList);
+            place(ground, presentAllocation, winner.x, winner.y, z);
+            cornerList.clear();
+            for (int x = 0; x < ground.length; x++) {
+                for (int y = 0; y < ground[x].length; y++) {
+                    Point point = ground[x][y];
+                    if (point.isCorner(ground)) {
+                        cornerList.add(point);
+                    }
+                }
+            }
             presentAllocation = presentAllocation.getNextPresentAllocation();
         }
         int maxZ = cornerList.listIterator().previous().z;
@@ -253,9 +258,10 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
 
         @Override
         public int compareTo(Point other) {
-            if (z < other.z) {
+System.out.println("WEIRD"); // TODO
+            if (y < other.y) {
                 return -1;
-            } else if (z > other.z) {
+            } else if (y > other.y) {
                 return 1;
             } else {
                 if (y < other.y) {
@@ -263,27 +269,31 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
                 } else if (y > other.y) {
                     return 1;
                 } else {
-                    if (y < other.y) {
-                        return -1;
-                    } else if (y > other.y) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+                    return 0;
                 }
             }
         }
 
-//        @Override
-//        public int hashCode() {
-//            return z + y *2000 + x * 2000000;
-//        }
-//
-//        @Override
-//        public boolean equals(Object o) {
-//            Point other = (Point) o;
-//            return z == other.z && y == other.y && x == other.x;
-//        }
+        public boolean isCorner(Point[][] ground) {
+            return isCornerX(ground) && isCornerY(ground);
+        }
+
+        public boolean isCornerX(Point[][] ground) {
+            if (x == 0) {
+                return true;
+            }
+            Point previousPoint = ground[x - 1][y];
+            return previousPoint.z > z || previousPoint.ySpaceEnd < ySpaceEnd;
+        }
+
+        public boolean isCornerY(Point[][] ground) {
+            if (y == 0) {
+                return true;
+            }
+            Point previousPoint = ground[x][y - 1];
+            return previousPoint.z > z || previousPoint.xSpaceEnd < xSpaceEnd;
+        }
+
     }
 
 }
