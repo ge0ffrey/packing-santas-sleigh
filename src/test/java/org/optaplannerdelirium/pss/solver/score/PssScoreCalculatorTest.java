@@ -32,13 +32,13 @@ public class PssScoreCalculatorTest {
         when(presentAllocation.getYLength()).thenReturn(3);
         when(presentAllocation.getZLength()).thenReturn(7);
 
-        PssScoreCalculator.Point[][] ground = createGroundFromTransposedZ(new int[][]{
+        PssScoreCalculator.Point[][] ground = createGround(transpose(new int[][]{
                 {1, 0, 0, 2, 0},
                 {1, 0, 0, 1, 0},
                 {0, 0, 0, 3, 3},
                 {0, 0, 1, 4, 3},
                 {0, 0, 0, 1, 2},
-        });
+        }));
         scoreCalculator.printGround(ground);
 
         assertEquals(false, scoreCalculator.fits(ground, presentAllocation, 0, 0, 0));
@@ -90,14 +90,7 @@ public class PssScoreCalculatorTest {
         assertEquals(false, scoreCalculator.fits(ground, presentAllocation, 3, 3, 4));
     }
 
-    private PssScoreCalculator.Point[][] createGroundFromTransposedZ(int[][] zGroundTransposed) {
-        int[][] zGround = new int[zGroundTransposed[0].length][zGroundTransposed.length];
-        // Undo transpose
-        for (int y = 0; y < zGroundTransposed.length; y++) {
-            for (int x = 0; x < zGroundTransposed[y].length; x++) {
-                zGround[x][y] = zGroundTransposed[y][x];
-            }
-        }
+    private PssScoreCalculator.Point[][] createGround(int[][] zGround) {
 
         PssScoreCalculator.Point[][] ground = new PssScoreCalculator.Point[zGround.length][zGround[0].length];
         for (int x = 0; x < zGround.length; x++) {
@@ -116,6 +109,16 @@ public class PssScoreCalculatorTest {
             }
         }
         return ground;
+    }
+
+    private int[][] transpose(int[][] original) {
+        int[][] transposed = new int[original[0].length][original.length];
+        for (int i = 0; i < original.length; i++) {
+            for (int j = 0; j < original[i].length; j++) {
+                transposed[j][i] = original[i][j];
+            }
+        }
+        return transposed;
     }
 
 }
