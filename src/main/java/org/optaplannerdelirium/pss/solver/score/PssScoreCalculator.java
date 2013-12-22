@@ -16,9 +16,10 @@
 
 package org.optaplannerdelirium.pss.solver.score;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.List;
 
 import org.optaplanner.core.api.score.buildin.simple.SimpleScore;
 import org.optaplanner.core.impl.score.director.simple.SimpleScoreCalculator;
@@ -34,66 +35,147 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
     public SimpleScore calculateScore(Sleigh sleigh) {
         AnchorAllocation anchorAllocation = sleigh.getAnchorAllocation();
         PresentAllocation presentAllocation = anchorAllocation.getNextPresentAllocation();
-        int[][] ground = new int[SLEIGH_X][SLEIGH_Y];
-        SortedSet<Corner> corners = new TreeSet<Corner>();
-        corners.add(new Corner(0, 0, 0));
-        while (presentAllocation != null) {
-            for (Iterator<Corner> it = corners.iterator(); it.hasNext(); ) {
-                Corner corner = it.next();
-                if (fits(presentAllocation, corner, ground)) {
-                    int xEnd = corner.x + presentAllocation.getXLength();
-                    int yEnd = corner.y + presentAllocation.getYLength();
-                    int zEnd = corner.z + presentAllocation.getZLength();
-                    for (int x = corner.x; x < xEnd; x++) {
-                        for (int y = corner.y; y < yEnd; y++) {
-                            ground[x][y] = zEnd;
-                        }
-                    }
-                    it.remove();
-                    // todo add new corners
-
-                    break;
-                }
+        Point[][] ground = new Point[SLEIGH_X][SLEIGH_Y];
+        for (int i = 0; i < SLEIGH_X; i++) {
+            for (int j = 0; j < SLEIGH_Y; j++) {
+                ground[i][j] = new Point(i, j);
             }
+        }
+        List<Point> cornerList = new ArrayList<Point>(SLEIGH_X * SLEIGH_Y);
+        cornerList.add(ground[0][0]);
+        while (presentAllocation != null) {
+            for (Iterator<Point> it = cornerList.iterator(); it.hasNext(); ) {
+                Point corner = it.next();
+
+
+//                ggg
+//                if (fits(presentAllocation, corner, ground)) {
+//                    int xEnd = corner.x + presentAllocation.getXLength();
+//                    int yEnd = corner.y + presentAllocation.getYLength();
+//                    int zEnd = corner.z + presentAllocation.getZLength();
+//                    for (int x = corner.x; x < xEnd; x++) {
+//                        for (int y = corner.y; y < yEnd; y++) {
+//                            ground[x][y] = zEnd;
+//                        }
+//                    }
+//                    it.remove();
+//                    cornerList.add(new Point(corner.x, corner.y, zEnd));
+//                    // todo add new cornerList
+//
+//                    break;
+//                }
+            }
+            Collections.sort(cornerList);
             presentAllocation = presentAllocation.getNextPresentAllocation();
         }
-        int maxZ = corners.last().z;
+        int maxZ = cornerList.listIterator().previous().z;
         return SimpleScore.valueOf(-2 * maxZ);
     }
 
-    private boolean fits(PresentAllocation presentAllocation, Corner corner, int[][] ground) {
-        int xEnd = corner.x + presentAllocation.getXLength();
-        if (xEnd > SLEIGH_X) {
+    protected boolean fits(Point[][] ground, PresentAllocation presentAllocation, int xStart, int yStart, int z) {
+        if (ground[xStart][yStart].z > z) {
             return false;
         }
-        int yEnd = corner.y + presentAllocation.getYLength();
-        if (yEnd > SLEIGH_Y) {
+        int xEnd = xStart + presentAllocation.getXLength();
+        if (xEnd > ground.length) {
             return false;
         }
-        for (int x = corner.x; x < xEnd; x++) {
-            for (int y = corner.y; y < yEnd; y++) {
-                if (ground[x][y] > corner.z) {
-                    return false;
-                }
+        int yEnd = yStart + presentAllocation.getYLength();
+        if (yEnd > ground[xStart].length) {
+            return false;
+        }
+        // TODO Quick false by doing fits both base lines first
+        for (int x = xStart; x < xEnd; x++) {
+            if (!fitsYLine(ground, x, yStart, z, yEnd)) {
+                return false;
+            }
+        }
+        for (int y = yStart; y < yEnd; y++) {
+            if (!fitsXLine(ground, xStart, y, z, xEnd)) {
+                return false;
             }
         }
         return true;
     }
 
-    private static class Corner implements Comparable<Corner> {
+    protected boolean fitsXLine(Point[][] ground, int x, int y, int z, int xEnd) {
+        Point point = ground[x][y];
+        while (true) {
+            if (point.x >= point.xSpaceEnd) { // TODO uncomment me
+                throw new IllegalStateException();
+            }
+            if (xEnd <= point.xSpaceEnd) {
+                return true;
+            }
+            // OutOfBoundsException only if ground is corrupted
+            point = ground[point.xSpaceEnd][y];
+            if (point.z > z) {
+                return false;
+            }
+        }
+    }
+
+    protected boolean fitsYLine(Point[][] ground, int x, int y, int z, int yEnd) {
+        Point point = ground[x][y];
+        while (true) {
+            if (point.y >= point.ySpaceEnd) { // TODO uncomment me
+                throw new IllegalStateException();
+            }
+            if (yEnd <= point.ySpaceEnd) {
+                return true;
+            }
+            // OutOfBoundsException only if ground is corrupted
+            point = ground[x][point.ySpaceEnd];
+            if (point.z > z) {
+                return false;
+            }
+        }
+    }
+
+    protected void printGround(Point[][] ground) {
+        System.out.println("z");
+        for (int y = 0; y < ground.length; y++) {
+            for (int x = 0; x < ground[y].length; x++) {
+                System.out.print(ground[x][y].z + "\t");
+            }
+            System.out.println("");
+        }
+        System.out.println("xSpaceEnd");
+        for (int y = 0; y < ground.length; y++) {
+            for (int x = 0; x < ground[y].length; x++) {
+                System.out.print(ground[x][y].xSpaceEnd + "\t");
+            }
+            System.out.println("");
+        }
+        System.out.println("ySpaceEnd");
+        for (int y = 0; y < ground.length; y++) {
+            for (int x = 0; x < ground[y].length; x++) {
+                System.out.print(ground[x][y].ySpaceEnd + "\t");
+            }
+            System.out.println("");
+        }
+    }
+
+    protected static class Point implements Comparable<Point> {
 
         public int x;
         public int y;
-        public int z;
 
-        private Corner(int x, int y, int z) {
+        // Changes
+        public int z;
+        public int xSpaceEnd;
+        public int ySpaceEnd;
+
+        protected Point(int x, int y) {
             this.x = x;
             this.y = y;
-            this.z = z;
+            z = 0;
+            xSpaceEnd = SLEIGH_X;
+            ySpaceEnd = SLEIGH_Y;
         }
 
         @Override
-        public int compareTo(Corner other) {
+        public int compareTo(Point other) {
             if (z < other.z) {
                 return -1;
             } else if (z > other.z) {
@@ -115,16 +197,16 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
             }
         }
 
-        @Override
-        public int hashCode() {
-            return z + y *2000 + x * 2000000;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            Corner other = (Corner) o;
-            return z == other.z && y == other.y && x == other.x;
-        }
+//        @Override
+//        public int hashCode() {
+//            return z + y *2000 + x * 2000000;
+//        }
+//
+//        @Override
+//        public boolean equals(Object o) {
+//            Point other = (Point) o;
+//            return z == other.z && y == other.y && x == other.x;
+//        }
     }
 
 }
