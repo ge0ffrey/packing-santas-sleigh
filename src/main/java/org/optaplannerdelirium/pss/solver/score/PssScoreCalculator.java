@@ -84,14 +84,14 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         if (yEnd > ground[xStart].length) {
             return false;
         }
-        // Quick false from the start corner
+        // Quick false of the start corner outwards
         if (!fitsYLine(ground, xStart, yStart, z, yEnd)) {
             return false;
         }
         if (!fitsXLine(ground, xStart, yStart, z, xEnd)) {
             return false;
         }
-        // Remaining falses
+        // Remaining false of the sides inwards
         for (int x = xStart + 1; x < xEnd; x++) {
             if (!fitsYLine(ground, x, yStart, z, yEnd)) {
                 return false;
@@ -137,6 +137,72 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
                 return false;
             }
         }
+    }
+
+    protected void place(Point[][] ground, PresentAllocation presentAllocation, int xStart, int yStart, int zStart) {
+        int xEnd = xStart + presentAllocation.getXLength();
+        int yEnd = yStart + presentAllocation.getYLength();
+        int zEnd = zStart + presentAllocation.getZLength();
+
+        for (int x = xStart; x < xEnd; x++) {
+            int ySpaceEnd = findYPlaceEnd(ground, x, yEnd, zEnd);
+            for (int y = yStart; y < yEnd; y++) {
+                ground[x][y].z = zEnd;
+                ground[x][y].ySpaceEnd = ySpaceEnd;
+            }
+            backwardsCorrectY(ground, x, yStart, zEnd);
+        }
+        for (int y = yStart; y < yEnd; y++) {
+            int xSpaceEnd = findXPlaceEnd(ground, xEnd, y, zEnd);
+            for (int x = xStart; x < xEnd; x++) {
+                ground[x][y].xSpaceEnd = xSpaceEnd;
+            }
+            backwardsCorrectX(ground, xStart, y, zEnd);
+        }
+    }
+
+    private void backwardsCorrectX(Point[][] ground, int xEnd, int y, int zEnd) {
+        // TODO unoptimal
+        for (int x = 0; x < xEnd; x++) {
+            Point point = ground[x][y];
+            if (point.xSpaceEnd > xEnd && point.z < zEnd) {
+                point.xSpaceEnd = xEnd;
+            }
+        }
+    }
+
+    private void backwardsCorrectY(Point[][] ground, int x, int yEnd, int zEnd) {
+        // TODO unoptimal
+        for (int y = 0; y < yEnd; y++) {
+            Point point = ground[x][y];
+            if (point.ySpaceEnd > yEnd && point.z < zEnd) {
+                point.ySpaceEnd = yEnd;
+            }
+        }
+    }
+
+    protected int findXPlaceEnd(Point[][] ground, int x, int y, int z) {
+        int xSpaceEnd = x;
+        while (xSpaceEnd < ground.length) {
+            Point point = ground[xSpaceEnd][y];
+            if (point.z > z) {
+                break;
+            }
+            xSpaceEnd = point.xSpaceEnd;
+        }
+        return xSpaceEnd;
+    }
+
+    protected int findYPlaceEnd(Point[][] ground, int x, int y, int z) {
+        int ySpaceEnd = y;
+        while (ySpaceEnd < ground[x].length) {
+            Point point = ground[x][ySpaceEnd];
+            if (point.z > z) {
+                break;
+            }
+            ySpaceEnd = point.ySpaceEnd;
+        }
+        return ySpaceEnd;
     }
 
     protected void printGround(Point[][] ground) {

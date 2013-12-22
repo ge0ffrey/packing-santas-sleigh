@@ -39,7 +39,6 @@ public class PssScoreCalculatorTest {
                 {0, 0, 1, 4, 3},
                 {0, 0, 0, 1, 2},
         }));
-        scoreCalculator.printGround(ground);
 
         assertEquals(false, scoreCalculator.fits(ground, presentAllocation, 0, 0, 0));
         assertEquals(true, scoreCalculator.fits(ground, presentAllocation, 0, 0, 1));
@@ -88,6 +87,54 @@ public class PssScoreCalculatorTest {
 
         assertEquals(false, scoreCalculator.fits(ground, presentAllocation, 3, 3, 3));
         assertEquals(false, scoreCalculator.fits(ground, presentAllocation, 3, 3, 4));
+    }
+
+    @Test
+    public void place() {
+        PssScoreCalculator scoreCalculator = new PssScoreCalculator();
+        PresentAllocation presentAllocation = mock(PresentAllocation.class);
+        when(presentAllocation.getXLength()).thenReturn(2);
+        when(presentAllocation.getYLength()).thenReturn(3);
+        when(presentAllocation.getZLength()).thenReturn(7);
+
+        PssScoreCalculator.Point[][] ground = createGround(transpose(new int[][]{
+                {1, 0, 0, 2, 0},
+                {1, 0, 0, 1, 0},
+                {0, 0, 0, 3, 3},
+                {0, 0, 1, 4, 3},
+                {0, 0, 0, 1, 2},
+        }));
+        scoreCalculator.place(ground, presentAllocation, 0, 0, 1);
+        assertPlacement(transpose(new int[][]{
+                {8, 8, 0, 2, 0},
+                {8, 8, 0, 1, 0},
+                {8, 8, 0, 3, 3},
+                {0, 0, 1, 4, 3},
+                {0, 0, 0, 1, 2},
+        }), transpose(new int[][]{
+                {5, 5, 3, 5, 5},
+                {5, 5, 3, 5, 5},
+                {5, 5, 3, 5, 5},
+                {2, 2, 3, 5, 5},
+                {3, 3, 3, 4, 5},
+        }), transpose(new int[][]{
+                {5, 5, 3, 2, 2},
+                {5, 5, 3, 2, 2},
+                {5, 5, 3, 3, 5},
+                {5, 5, 5, 5, 5},
+                {5, 5, 5, 5, 5},
+        }), ground);
+    }
+
+    private void assertPlacement(int[][] zGround, int[][] xSpaceEndGround, int[][] ySpaceEndGround,
+            PssScoreCalculator.Point[][] ground) {
+        for (int x = 0; x < ground.length; x++) {
+            for (int y = 0; y < ground[x].length; y++) {
+                assertEquals(zGround[x][y], ground[x][y].z);
+                assertEquals(xSpaceEndGround[x][y], ground[x][y].xSpaceEnd);
+                assertEquals(ySpaceEndGround[x][y], ground[x][y].ySpaceEnd);
+            }
+        }
     }
 
     private PssScoreCalculator.Point[][] createGround(int[][] zGround) {
