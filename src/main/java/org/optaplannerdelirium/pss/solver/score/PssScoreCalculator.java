@@ -17,13 +17,7 @@
 package org.optaplannerdelirium.pss.solver.score;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.optaplanner.core.api.score.buildin.simple.SimpleScore;
 import org.optaplanner.core.impl.score.director.simple.SimpleScoreCalculator;
@@ -47,6 +41,7 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         }
         List<Point> cornerList = new ArrayList<Point>(SLEIGH_X * SLEIGH_Y);
         cornerList.add(ground[0][0]);
+//int count = 0;
         while (presentAllocation != null) {
             int z = cornerList.get(0).z - 1;
             Point winner = null;
@@ -58,23 +53,31 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
                     }
                     if (fits(ground, presentAllocation, corner.x, corner.y, z)) {
                         winner = corner;
+                        break;
                     }
                 }
             }
+//System.out.print(count + " winner found.");
             place(ground, presentAllocation, winner.x, winner.y, z);
-            cornerList.clear();
-            for (int x = 0; x < ground.length; x++) {
-                for (int y = 0; y < ground[x].length; y++) {
-                    Point point = ground[x][y];
-                    if (point.isCorner(ground)) {
-                        cornerList.add(point);
-                    }
-                }
-            }
+            refreshCornerList(ground, cornerList);
+//System.out.println(" Winner placed.");
             presentAllocation = presentAllocation.getNextPresentAllocation();
+//count++;
         }
         int maxZ = cornerList.listIterator().previous().z;
         return SimpleScore.valueOf(-2 * maxZ);
+    }
+
+    protected void refreshCornerList(Point[][] ground, List<Point> cornerList) {
+        cornerList.clear();
+        for (int x = 0; x < ground.length; x++) {
+            for (int y = 0; y < ground[x].length; y++) {
+                Point point = ground[x][y];
+                if (point.isCorner(ground)) {
+                    cornerList.add(point);
+                }
+            }
+        }
     }
 
     protected boolean fits(Point[][] ground, PresentAllocation presentAllocation, int xStart, int yStart, int z) {
