@@ -90,7 +90,7 @@ public class PssScoreCalculatorTest {
     }
 
     @Test
-    public void place() {
+    public void place_0_0() {
         PssScoreCalculator scoreCalculator = new PssScoreCalculator();
         PresentAllocation presentAllocation = mock(PresentAllocation.class);
         when(presentAllocation.getXLength()).thenReturn(2);
@@ -121,6 +121,80 @@ public class PssScoreCalculatorTest {
                 {5, 5, 3, 2, 2},
                 {5, 5, 3, 2, 2},
                 {5, 5, 3, 3, 5},
+                {5, 5, 5, 5, 5},
+                {5, 5, 5, 5, 5},
+        }), ground);
+    }
+
+    @Test
+    public void place_1_0() {
+        PssScoreCalculator scoreCalculator = new PssScoreCalculator();
+        PresentAllocation presentAllocation = mock(PresentAllocation.class);
+        when(presentAllocation.getXLength()).thenReturn(2);
+        when(presentAllocation.getYLength()).thenReturn(3);
+        when(presentAllocation.getZLength()).thenReturn(7);
+
+        PssScoreCalculator.Point[][] ground = createGround(transpose(new int[][]{
+                {1, 0, 0, 2, 0},
+                {9, 0, 0, 9, 0},
+                {0, 0, 0, 3, 3},
+                {0, 0, 1, 4, 3},
+                {0, 0, 0, 1, 2},
+        }));
+        scoreCalculator.place(ground, presentAllocation, 1, 0, 0);
+        assertPlacement(transpose(new int[][]{
+                {1, 7, 7, 2, 0},
+                {9, 7, 7, 9, 0},
+                {0, 7, 7, 3, 3},
+                {0, 0, 1, 4, 3},
+                {0, 0, 0, 1, 2},
+        }), transpose(new int[][]{
+                {1, 5, 5, 5, 5},
+                {5, 3, 3, 5, 5},
+                {1, 5, 5, 5, 5},
+                {2, 2, 3, 5, 5},
+                {3, 3, 3, 4, 5},
+        }), transpose(new int[][]{
+                {1, 5, 5, 1, 2},
+                {5, 5, 5, 5, 2},
+                {5, 5, 5, 3, 5},
+                {5, 5, 5, 5, 5},
+                {5, 5, 5, 5, 5},
+        }), ground);
+    }
+
+    @Test
+    public void place_3_2() {
+        PssScoreCalculator scoreCalculator = new PssScoreCalculator();
+        PresentAllocation presentAllocation = mock(PresentAllocation.class);
+        when(presentAllocation.getXLength()).thenReturn(2);
+        when(presentAllocation.getYLength()).thenReturn(3);
+        when(presentAllocation.getZLength()).thenReturn(7);
+
+        PssScoreCalculator.Point[][] ground = createGround(transpose(new int[][]{
+                {1, 0, 0, 2, 1},
+                {9, 0, 0, 9, 0},
+                {9, 0, 1, 3, 3},
+                {1, 0, 2, 4, 3},
+                {0, 0, 0, 1, 2},
+        }));
+        scoreCalculator.place(ground, presentAllocation, 3, 2, 4);
+        assertPlacement(transpose(new int[][]{
+                {1, 0, 0, 2, 1},
+                {9, 0, 0, 9, 0},
+                {9, 0, 1, 11, 11},
+                {1, 0, 2, 11, 11},
+                {0, 0, 0, 11, 11},
+        }), transpose(new int[][]{
+                {3, 3, 3, 5, 5},
+                {5, 3, 3, 5, 5},
+                {3, 2, 3, 5, 5},
+                {2, 2, 3, 5, 5},
+                {3, 3, 3, 5, 5},
+        }), transpose(new int[][]{
+                {1, 5, 2, 1, 2},
+                {5, 5, 2, 2, 2},
+                {5, 5, 3, 5, 5},
                 {5, 5, 5, 5, 5},
                 {5, 5, 5, 5, 5},
         }), ground);
