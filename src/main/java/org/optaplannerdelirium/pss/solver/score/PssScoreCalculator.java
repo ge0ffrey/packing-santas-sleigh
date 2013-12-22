@@ -162,20 +162,24 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
     }
 
     private void backwardsCorrectX(Point[][] ground, int xEnd, int y, int zEnd) {
-        // TODO unoptimal
-        for (int x = 0; x < xEnd; x++) {
+        for (int x = xEnd - 1; x >= 0; x--) {
             Point point = ground[x][y];
-            if (point.xSpaceEnd > xEnd && point.z < zEnd) {
+            if (point.z >= zEnd) {
+                break;
+            }
+            if (point.xSpaceEnd > xEnd) {
                 point.xSpaceEnd = xEnd;
             }
         }
     }
 
     private void backwardsCorrectY(Point[][] ground, int x, int yEnd, int zEnd) {
-        // TODO unoptimal
-        for (int y = 0; y < yEnd; y++) {
+        for (int y = yEnd - 1; y >= 0; y--) {
             Point point = ground[x][y];
-            if (point.ySpaceEnd > yEnd && point.z < zEnd) {
+            if (point.z >= zEnd) {
+                break;
+            }
+            if (point.ySpaceEnd > yEnd) {
                 point.ySpaceEnd = yEnd;
             }
         }
