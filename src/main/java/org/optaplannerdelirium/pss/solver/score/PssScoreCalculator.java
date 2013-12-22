@@ -84,13 +84,20 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         if (yEnd > ground[xStart].length) {
             return false;
         }
-        // TODO Quick false by doing fits both base lines first
-        for (int x = xStart; x < xEnd; x++) {
+        // Quick false from the start corner
+        if (!fitsYLine(ground, xStart, yStart, z, yEnd)) {
+            return false;
+        }
+        if (!fitsXLine(ground, xStart, yStart, z, xEnd)) {
+            return false;
+        }
+        // Remaining falses
+        for (int x = xStart + 1; x < xEnd; x++) {
             if (!fitsYLine(ground, x, yStart, z, yEnd)) {
                 return false;
             }
         }
-        for (int y = yStart; y < yEnd; y++) {
+        for (int y = yStart + 1; y < yEnd; y++) {
             if (!fitsXLine(ground, xStart, y, z, xEnd)) {
                 return false;
             }
