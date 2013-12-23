@@ -16,8 +16,6 @@
 
 package org.optaplannerdelirium.pss.solver.score;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -28,6 +26,8 @@ import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 
 public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
+
+    private final static boolean assertMode = false;
 
     public static final int SLEIGH_X = 1000;
     public static final int SLEIGH_Y = 1000;
@@ -43,8 +43,7 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         }
         SortedSet<Point> cornerSet = new TreeSet<Point>();
         Point gridCorner = ground[0][0];
-        gridCorner.cornerMark = true;
-        cornerSet.add(gridCorner);
+        addCorner(cornerSet, gridCorner);
 int count = 0;
         while (presentAllocation != null) {
             int z = findMinimalZ(cornerSet);
@@ -62,11 +61,24 @@ int count = 0;
                 }
             }
             place(ground, cornerSet, presentAllocation, winner.x, winner.y, z);
-System.out.print(count + " winner found.");
+            if (assertMode) {
+                validateGround(ground, cornerSet);
+            }
+System.out.println(count + " winner found.");
             presentAllocation = presentAllocation.getNextPresentAllocation();
 count++;
         }
         return SimpleScore.valueOf(-2 * findMaximalZ(cornerSet));
+    }
+
+    private void validateGround(Point[][] ground, SortedSet<Point> cornerSet) {
+        for (Point[] points : ground) {
+            for (Point point : points) {
+                if (point.cornerMark && !cornerSet.contains(point)) {
+                    throw new IllegalStateException("Point " + point + " : " + point.isCorner(ground));
+                }
+            }
+        }
     }
 
     protected int findMinimalZ(SortedSet<Point> cornerSet) {
@@ -168,11 +180,7 @@ count++;
                 point.z = zEnd;
                 point.ySpaceEnd = ySpaceEnd;
                 if (point.cornerMark) {
-                    point.cornerMark = false;
-                    boolean removed = cornerSet.remove(point);
-                    if (!removed) {
-                        throw new IllegalStateException();
-                    }
+                    removeCorner(cornerSet, point);
                 }
             }
             backwardsCorrectY(ground, cornerSet, x, yStart, zEnd);
@@ -187,8 +195,7 @@ count++;
         // Add corners
         Point basePoint = ground[xStart][yStart];
         if (basePoint.isCorner(ground)) {
-            basePoint.cornerMark = true;
-            cornerSet.add(basePoint);
+            addCorner(cornerSet, basePoint);
         }
         if (yEnd < ground[0].length) {
             for (int x = xEnd - 1; x >= 0; x--) {
@@ -197,8 +204,7 @@ count++;
                     break;
                 }
                 if (!point.cornerMark && point.isCorner(ground)) {
-                    point.cornerMark = true;
-                    cornerSet.add(point);
+                    addCorner(cornerSet, point);
                 }
             }
         }
@@ -209,8 +215,7 @@ count++;
                     break;
                 }
                 if (!point.cornerMark && point.isCorner(ground)) {
-                    point.cornerMark = true;
-                    cornerSet.add(point);
+                    addCorner(cornerSet, point);
                 }
             }
         }
@@ -226,11 +231,7 @@ count++;
                 point.xSpaceEnd = xEnd;
             }
             if (point.cornerMark && !point.isCornerY(ground)) {
-                point.cornerMark = false;
-                boolean removed = cornerSet.remove(point);
-                if (!removed) {
-                    throw new IllegalStateException();
-                }
+                removeCorner(cornerSet, point);
             }
         }
     }
@@ -245,11 +246,7 @@ count++;
                 point.ySpaceEnd = yEnd;
             }
             if (point.cornerMark && !point.isCornerX(ground)) {
-                point.cornerMark = false;
-                boolean removed = cornerSet.remove(point);
-                if (!removed) {
-                    throw new IllegalStateException();
-                }
+                removeCorner(cornerSet, point);
             }
         }
     }
@@ -276,6 +273,22 @@ count++;
             ySpaceEnd = point.ySpaceEnd;
         }
         return ySpaceEnd;
+    }
+
+    private void addCorner(SortedSet<Point> cornerSet, Point point) {
+        point.cornerMark = true;
+        boolean added = cornerSet.add(point);
+        if (!added) {
+            throw new IllegalStateException("Point (" + point + ") not added.");
+        }
+    }
+
+    private void removeCorner(SortedSet<Point> cornerSet, Point point) {
+        point.cornerMark = false;
+        boolean removed = cornerSet.remove(point);
+        if (!removed) {
+            throw new IllegalStateException("Point (" + point + ") not removed.");
+        }
     }
 
     protected void printGround(Point[][] ground) {
@@ -329,9 +342,9 @@ count++;
             } else if (y > other.y) {
                 return 1;
             } else {
-                if (y < other.y) {
+                if (x < other.x) {
                     return -1;
-                } else if (y > other.y) {
+                } else if (x > other.x) {
                     return 1;
                 } else {
                     return 0;
@@ -359,6 +372,10 @@ count++;
             return previousPoint.z > z || previousPoint.xSpaceEnd < xSpaceEnd;
         }
 
+        @Override
+        public String toString() {
+            return "(" + x + "," + y + ")";
+        }
     }
 
 }
