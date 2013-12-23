@@ -24,8 +24,12 @@ import org.optaplanner.core.impl.score.director.simple.SimpleScoreCalculator;
 import org.optaplannerdelirium.pss.domain.AnchorAllocation;
 import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
+
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private final static boolean ASSERT_MODE = true;
 
@@ -44,7 +48,7 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         SortedSet<Point> cornerSet = new TreeSet<Point>();
         Point gridCorner = ground[0][0];
         addCorner(cornerSet, gridCorner);
-int count = 0;
+        int presentIndex = 0;
         while (presentAllocation != null) {
             int minimalZ = findMinimalZ(cornerSet);
             int z = minimalZ;
@@ -54,12 +58,17 @@ int count = 0;
                 winner = findWinnerForZ(ground, cornerSet, presentAllocation, z);
             }
             place(ground, cornerSet, presentAllocation, winner.x, winner.y, z);
+            if (logger.isTraceEnabled()) {
+                logger.trace("  Placed {}th present ({},{},{}) at point ({},{},{}) for {} z iterations and {} corners.", presentIndex,
+                        presentAllocation.getXLength(), presentAllocation.getYLength(), presentAllocation.getZLength(),
+                        winner.x, winner.y, winner.z,
+                        z - minimalZ + 1, cornerSet.size());
+            }
             if (ASSERT_MODE) {
                 validateGround(ground, cornerSet);
             }
-System.out.println(count + " winner found. New cornetSet size (" + cornerSet.size() + "). Z from minimalZ (" + minimalZ + ") to z (" + z +").");
             presentAllocation = presentAllocation.getNextPresentAllocation();
-count++;
+            presentIndex++;
         }
         return SimpleScore.valueOf(-2 * findMaximalZ(cornerSet));
     }
@@ -188,9 +197,17 @@ count++;
             backwardsCorrectX(ground, cornerSet, xStart, y, zEnd);
         }
         // Add corners
-        Point basePoint = ground[xStart][yStart];
-        if (basePoint.isCorner(ground)) {
-            addCorner(cornerSet, basePoint);
+        for (int x = xStart; x < xEnd; x++) {
+            Point point = ground[x][yStart];
+            if (point.isCorner(ground)) {
+                addCorner(cornerSet, point);
+            }
+        }
+        for (int y = yStart + 1; y < yEnd; y++) {
+            Point point = ground[xStart][y];
+            if (point.isCorner(ground)) {
+                addCorner(cornerSet, point);
+            }
         }
         if (yEnd < ground[0].length) {
             for (int x = xEnd - 1; x >= 0; x--) {
