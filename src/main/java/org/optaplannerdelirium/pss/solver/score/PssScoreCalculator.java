@@ -18,6 +18,8 @@ package org.optaplannerdelirium.pss.solver.score;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.optaplanner.core.api.score.buildin.simple.SimpleScore;
 import org.optaplanner.core.impl.score.director.simple.SimpleScoreCalculator;
@@ -39,15 +41,17 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
                 ground[i][j] = new Point(i, j);
             }
         }
-        List<Point> cornerList = new ArrayList<Point>(SLEIGH_X * SLEIGH_Y);
-        cornerList.add(ground[0][0]);
-//int count = 0;
+        SortedSet<Point> cornerSet = new TreeSet<Point>();
+        Point gridCorner = ground[0][0];
+        gridCorner.cornerMark = true;
+        cornerSet.add(gridCorner);
+int count = 0;
         while (presentAllocation != null) {
-            int z = cornerList.get(0).z - 1;
+            int z = findMinimalZ(cornerSet);
             Point winner = null;
             while (winner == null) {
                 z++;
-                for (Point corner : cornerList) {
+                for (Point corner : cornerSet) {
                     if (corner.z > z) {
                         continue;
                     }
@@ -57,27 +61,32 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
                     }
                 }
             }
-//System.out.print(count + " winner found.");
-            place(ground, presentAllocation, winner.x, winner.y, z);
-            refreshCornerList(ground, cornerList);
-//System.out.println(" Winner placed.");
+            place(ground, cornerSet, presentAllocation, winner.x, winner.y, z);
+System.out.print(count + " winner found.");
             presentAllocation = presentAllocation.getNextPresentAllocation();
-//count++;
+count++;
         }
-        int maxZ = cornerList.listIterator().previous().z;
-        return SimpleScore.valueOf(-2 * maxZ);
+        return SimpleScore.valueOf(-2 * findMaximalZ(cornerSet));
     }
 
-    protected void refreshCornerList(Point[][] ground, List<Point> cornerList) {
-        cornerList.clear();
-        for (int x = 0; x < ground.length; x++) {
-            for (int y = 0; y < ground[x].length; y++) {
-                Point point = ground[x][y];
-                if (point.isCorner(ground)) {
-                    cornerList.add(point);
-                }
+    protected int findMinimalZ(SortedSet<Point> cornerSet) {
+        int min = Integer.MAX_VALUE;
+        for (Point corner : cornerSet) {
+            if (corner.z < min) {
+                min = corner.z;
             }
         }
+        return min;
+    }
+
+    protected int findMaximalZ(SortedSet<Point> cornerSet) {
+        int max = Integer.MIN_VALUE;
+        for (Point corner : cornerSet) {
+            if (corner.z > max) {
+                max = corner.z;
+            }
+        }
+        return max;
     }
 
     protected boolean fits(Point[][] ground, PresentAllocation presentAllocation, int xStart, int yStart, int z) {
@@ -147,7 +156,7 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         }
     }
 
-    protected void place(Point[][] ground, PresentAllocation presentAllocation, int xStart, int yStart, int zStart) {
+    protected void place(Point[][] ground, SortedSet<Point> cornerSet, PresentAllocation presentAllocation, int xStart, int yStart, int zStart) {
         int xEnd = xStart + presentAllocation.getXLength();
         int yEnd = yStart + presentAllocation.getYLength();
         int zEnd = zStart + presentAllocation.getZLength();
@@ -155,21 +164,59 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         for (int x = xStart; x < xEnd; x++) {
             int ySpaceEnd = findYPlaceEnd(ground, x, yEnd, zEnd);
             for (int y = yStart; y < yEnd; y++) {
-                ground[x][y].z = zEnd;
-                ground[x][y].ySpaceEnd = ySpaceEnd;
+                Point point = ground[x][y];
+                point.z = zEnd;
+                point.ySpaceEnd = ySpaceEnd;
+                if (point.cornerMark) {
+                    point.cornerMark = false;
+                    boolean removed = cornerSet.remove(point);
+                    if (!removed) {
+                        throw new IllegalStateException();
+                    }
+                }
             }
-            backwardsCorrectY(ground, x, yStart, zEnd);
+            backwardsCorrectY(ground, cornerSet, x, yStart, zEnd);
         }
         for (int y = yStart; y < yEnd; y++) {
             int xSpaceEnd = findXPlaceEnd(ground, xEnd, y, zEnd);
             for (int x = xStart; x < xEnd; x++) {
                 ground[x][y].xSpaceEnd = xSpaceEnd;
             }
-            backwardsCorrectX(ground, xStart, y, zEnd);
+            backwardsCorrectX(ground, cornerSet, xStart, y, zEnd);
+        }
+        // Add corners
+        Point basePoint = ground[xStart][yStart];
+        if (basePoint.isCorner(ground)) {
+            basePoint.cornerMark = true;
+            cornerSet.add(basePoint);
+        }
+        if (yEnd < ground[0].length) {
+            for (int x = xEnd - 1; x >= 0; x--) {
+                Point point = ground[x][yEnd];
+                if (point.z >= zEnd && x < xStart) {
+                    break;
+                }
+                if (!point.cornerMark && point.isCorner(ground)) {
+                    point.cornerMark = true;
+                    cornerSet.add(point);
+                }
+            }
+        }
+        if (xEnd < ground.length) {
+            for (int y = yEnd - 1; y >= 0; y--) {
+                Point point = ground[xEnd][y];
+                if (point.z >= zEnd && y < yStart) {
+                    break;
+                }
+                if (!point.cornerMark && point.isCorner(ground)) {
+                    point.cornerMark = true;
+                    cornerSet.add(point);
+                }
+            }
         }
     }
 
-    private void backwardsCorrectX(Point[][] ground, int xEnd, int y, int zEnd) {
+    private void backwardsCorrectX(Point[][] ground, SortedSet<Point> cornerSet, int xEnd, int y, int zEnd) {
         for (int x = xEnd - 1; x >= 0; x--) {
             Point point = ground[x][y];
             if (point.z >= zEnd) {
@@ -178,10 +225,17 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
             if (point.xSpaceEnd > xEnd) {
                 point.xSpaceEnd = xEnd;
             }
+            if (point.cornerMark && !point.isCornerY(ground)) {
+                point.cornerMark = false;
+                boolean removed = cornerSet.remove(point);
+                if (!removed) {
+                    throw new IllegalStateException();
+                }
+            }
         }
     }
 
-    private void backwardsCorrectY(Point[][] ground, int x, int yEnd, int zEnd) {
+    private void backwardsCorrectY(Point[][] ground, SortedSet<Point> cornerSet, int x, int yEnd, int zEnd) {
         for (int y = yEnd - 1; y >= 0; y--) {
             Point point = ground[x][y];
             if (point.z >= zEnd) {
@@ -189,6 +243,13 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
             }
             if (point.ySpaceEnd > yEnd) {
                 point.ySpaceEnd = yEnd;
+            }
+            if (point.cornerMark && !point.isCornerX(ground)) {
+                point.cornerMark = false;
+                boolean removed = cornerSet.remove(point);
+                if (!removed) {
+                    throw new IllegalStateException();
+                }
             }
         }
     }
@@ -250,6 +311,7 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         public int z;
         public int xSpaceEnd;
         public int ySpaceEnd;
+        public boolean cornerMark;
 
         protected Point(int x, int y) {
             this.x = x;
@@ -257,11 +319,11 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
             z = 0;
             xSpaceEnd = SLEIGH_X;
             ySpaceEnd = SLEIGH_Y;
+            cornerMark = false;
         }
 
         @Override
         public int compareTo(Point other) {
-System.out.println("WEIRD"); // TODO
             if (y < other.y) {
                 return -1;
             } else if (y > other.y) {

@@ -16,6 +16,8 @@
 
 package org.optaplannerdelirium.pss.solver.score;
 
+import java.util.SortedSet;
+
 import org.junit.Test;
 import org.optaplannerdelirium.pss.domain.PresentAllocation;
 
@@ -104,7 +106,8 @@ public class PssScoreCalculatorTest {
                 {0, 0, 1, 4, 3},
                 {0, 0, 0, 1, 2},
         }));
-        scoreCalculator.place(ground, presentAllocation, 0, 0, 1);
+        SortedSet<PssScoreCalculator.Point> cornerSet = mock(SortedSet.class);
+        scoreCalculator.place(ground, cornerSet, presentAllocation, 0, 0, 1);
         assertPlacement(transpose(new int[][]{
                 {8, 8, 0, 2, 0},
                 {8, 8, 0, 1, 0},
@@ -141,7 +144,8 @@ public class PssScoreCalculatorTest {
                 {0, 0, 1, 4, 3},
                 {0, 0, 0, 1, 2},
         }));
-        scoreCalculator.place(ground, presentAllocation, 1, 0, 0);
+        SortedSet<PssScoreCalculator.Point> cornerSet = mock(SortedSet.class);
+        scoreCalculator.place(ground, cornerSet, presentAllocation, 1, 0, 0);
         assertPlacement(transpose(new int[][]{
                 {1, 7, 7, 2, 0},
                 {9, 7, 7, 9, 0},
@@ -178,7 +182,8 @@ public class PssScoreCalculatorTest {
                 {1, 0, 2, 4, 3},
                 {0, 0, 0, 1, 2},
         }));
-        scoreCalculator.place(ground, presentAllocation, 3, 2, 4);
+        SortedSet<PssScoreCalculator.Point> cornerSet = mock(SortedSet.class);
+        scoreCalculator.place(ground, cornerSet, presentAllocation, 3, 2, 4);
         assertPlacement(transpose(new int[][]{
                 {1, 0, 0, 2, 1},
                 {9, 0, 0, 9, 0},
