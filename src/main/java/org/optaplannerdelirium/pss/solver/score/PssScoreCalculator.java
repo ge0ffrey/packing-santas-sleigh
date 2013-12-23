@@ -27,7 +27,7 @@ import org.optaplannerdelirium.pss.domain.Sleigh;
 
 public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
 
-    private final static boolean ASSERT_MODE = false;
+    private final static boolean ASSERT_MODE = true;
 
     public static final int SLEIGH_X = 1000;
     public static final int SLEIGH_Y = 1000;
@@ -313,8 +313,11 @@ count++;
     private void validateGround(Point[][] ground, SortedSet<Point> cornerSet) {
         for (Point[] points : ground) {
             for (Point point : points) {
-                if (point.cornerMark && !cornerSet.contains(point)) {
-                    throw new IllegalStateException("Point " + point + " : " + point.isCorner(ground));
+                if (point.cornerMark != point.isCorner(ground)) {
+                    throw new IllegalStateException("Point (" + point + ") should be corner (" + point.isCorner(ground) + ").");
+                }
+                if (point.cornerMark != cornerSet.contains(point)) {
+                    throw new IllegalStateException("Point (" + point + ") invalid with cornerSet.");
                 }
             }
         }
