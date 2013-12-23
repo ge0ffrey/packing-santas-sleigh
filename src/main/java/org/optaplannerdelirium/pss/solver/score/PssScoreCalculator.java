@@ -27,7 +27,7 @@ import org.optaplannerdelirium.pss.domain.Sleigh;
 
 public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
 
-    private final static boolean assertMode = false;
+    private final static boolean ASSERT_MODE = false;
 
     public static final int SLEIGH_X = 1000;
     public static final int SLEIGH_Y = 1000;
@@ -46,39 +46,34 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         addCorner(cornerSet, gridCorner);
 int count = 0;
         while (presentAllocation != null) {
-            int z = findMinimalZ(cornerSet);
+            int minimalZ = findMinimalZ(cornerSet);
+            int z = minimalZ;
             Point winner = null;
             while (winner == null) {
                 z++;
-                for (Point corner : cornerSet) {
-                    if (corner.z > z) {
-                        continue;
-                    }
-                    if (fits(ground, presentAllocation, corner.x, corner.y, z)) {
-                        winner = corner;
-                        break;
-                    }
-                }
+                winner = findWinnerForZ(ground, cornerSet, presentAllocation, z);
             }
             place(ground, cornerSet, presentAllocation, winner.x, winner.y, z);
-            if (assertMode) {
+            if (ASSERT_MODE) {
                 validateGround(ground, cornerSet);
             }
-System.out.println(count + " winner found.");
+System.out.println(count + " winner found. New cornetSet size (" + cornerSet.size() + "). Z from minimalZ (" + minimalZ + ") to z (" + z +").");
             presentAllocation = presentAllocation.getNextPresentAllocation();
 count++;
         }
         return SimpleScore.valueOf(-2 * findMaximalZ(cornerSet));
     }
 
-    private void validateGround(Point[][] ground, SortedSet<Point> cornerSet) {
-        for (Point[] points : ground) {
-            for (Point point : points) {
-                if (point.cornerMark && !cornerSet.contains(point)) {
-                    throw new IllegalStateException("Point " + point + " : " + point.isCorner(ground));
-                }
+    private Point findWinnerForZ(Point[][] ground, SortedSet<Point> cornerSet, PresentAllocation presentAllocation, int z) {
+        for (Point corner : cornerSet) {
+            if (corner.z > z) {
+                continue;
+            }
+            if (fits(ground, presentAllocation, corner.x, corner.y, z)) {
+                return corner;
             }
         }
+        return null;
     }
 
     protected int findMinimalZ(SortedSet<Point> cornerSet) {
@@ -312,6 +307,16 @@ count++;
                 System.out.print(ground[x][y].ySpaceEnd + "\t");
             }
             System.out.println("");
+        }
+    }
+
+    private void validateGround(Point[][] ground, SortedSet<Point> cornerSet) {
+        for (Point[] points : ground) {
+            for (Point point : points) {
+                if (point.cornerMark && !cornerSet.contains(point)) {
+                    throw new IllegalStateException("Point " + point + " : " + point.isCorner(ground));
+                }
+            }
         }
     }
 
