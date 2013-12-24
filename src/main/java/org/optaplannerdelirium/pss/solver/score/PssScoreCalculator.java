@@ -396,22 +396,39 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
             if (x == 0) {
                 return true;
             }
-            Point previousPoint = ground[x - 1][y];
-            return previousPoint.z > z || previousPoint.ySpaceEnd < ySpaceEnd;
+            int previousX = x - 1;
+            int searchY = y;
+            while (searchY < ground[previousX].length) {
+                Point searchPoint = ground[previousX][searchY];
+                if (searchPoint.z > ground[x][searchY].z) {
+                    return true;
+                }
+                searchY = searchPoint.ySpaceEnd;
+            }
+            return false;
         }
 
         public boolean isCornerY(Point[][] ground) {
             if (y == 0) {
                 return true;
             }
-            Point previousPoint = ground[x][y - 1];
-            return previousPoint.z > z || previousPoint.xSpaceEnd < xSpaceEnd;
+            int previousY = y - 1;
+            int searchX = x;
+            while (searchX < ground.length) {
+                Point searchPoint = ground[searchX][previousY];
+                if (searchPoint.z > ground[searchX][y].z) {
+                    return true;
+                }
+                searchX = searchPoint.xSpaceEnd;
+            }
+            return false;
         }
 
         @Override
         public String toString() {
             return "(" + x + "," + y + ")";
         }
+
     }
 
 }
