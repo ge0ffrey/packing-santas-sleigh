@@ -183,9 +183,6 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
                 Point point = ground[x][y];
                 point.z = zEnd;
                 point.ySpaceEnd = ySpaceEnd;
-                if (point.cornerMark) {
-                    removeCorner(cornerSet, point);
-                }
             }
             backwardsCorrectY(ground, cornerSet, x, yStart, zEnd);
         }
@@ -198,15 +195,17 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         }
         // Add corners
         for (int x = xStart; x < xEnd; x++) {
-            Point point = ground[x][yStart];
-            if (point.isCorner(ground)) {
-                addCorner(cornerSet, point);
-            }
-        }
-        for (int y = yStart + 1; y < yEnd; y++) {
-            Point point = ground[xStart][y];
-            if (point.isCorner(ground)) {
-                addCorner(cornerSet, point);
+            for (int y = yStart; y < yEnd; y++) {
+                Point point = ground[x][y];
+                if (point.cornerMark) {
+                    if (!point.isCorner(ground)) {
+                        removeCorner(cornerSet, point);
+                    }
+                } else if (x == xStart || y == yStart) {
+                    if (point.isCorner(ground)) {
+                        addCorner(cornerSet, point);
+                    }
+                }
             }
         }
         if (yEnd < ground[0].length) {
@@ -321,33 +320,44 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
     }
 
     protected void printGround(Point[][] ground, int xStart, int xEnd, int yStart, int yEnd) {
-        System.out.println("z\t\t\txSpaceEnd\t\t\tySpaceEnd");
+        System.out.println("       z, xSpaceEnd, ySpaceEnd");
+        System.out.print("       ");
         for (int x = xStart; x < xEnd; x++) {
-            System.out.print("_" + x + "_\t");
+            printNumber(x);
         }
-        System.out.print("\t\t\t");
+        System.out.print("       ");
         for (int x = xStart; x < xEnd; x++) {
-            System.out.print("_" + x + "_\t");
+            printNumber(x);
         }
-        System.out.print("\t\t\t");
+        System.out.print("       ");
         for (int x = xStart; x < xEnd; x++) {
-            System.out.print("_" + x + "_\t");
+            printNumber(x);
         }
         System.out.println("");
+        System.out.println("       ----");
         for (int y = yStart; y < yEnd; y++) {
-            System.out.print(y + ":\t");
+            printNumber(y);
+            System.out.print(":");
             for (int x = xStart; x < xEnd; x++) {
-                System.out.print(ground[x][y].z + "\t");
+                printNumber(ground[x][y].z);
             }
-            System.out.print("\t\t\t");
+            System.out.print("       ");
             for (int x = xStart; x < xEnd; x++) {
-                System.out.print(ground[x][y].xSpaceEnd + "\t");
+                printNumber(ground[x][y].xSpaceEnd);
             }
-            System.out.print("\t\t\t");
+            System.out.print("       ");
             for (int x = xStart; x < xEnd; x++) {
-                System.out.print(ground[x][y].ySpaceEnd + "\t");
+                printNumber(ground[x][y].ySpaceEnd);
             }
             System.out.println("");
+        }
+    }
+
+    private void printNumber(int number) {
+        String s = Integer.toString(number);
+        System.out.print(s);
+        for (int i = s.length(); i < 6; i++) {
+            System.out.print(" ");
         }
     }
 
