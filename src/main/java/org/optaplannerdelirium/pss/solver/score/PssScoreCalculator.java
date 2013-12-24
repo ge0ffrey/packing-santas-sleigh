@@ -335,7 +335,7 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         }
         System.out.println("");
         System.out.println("       ----");
-        for (int y = yStart; y < yEnd; y++) {
+        for (int y = yEnd - 1; y >= yStart; y--) {
             printNumber(y);
             System.out.print(":");
             for (int x = xStart; x < xEnd; x++) {
@@ -410,7 +410,7 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
             int searchY = y;
             while (searchY < ground[previousX].length) {
                 Point searchPoint = ground[previousX][searchY];
-                if (searchPoint.z > ground[x][searchY].z) {
+                if (searchPoint.z > ground[x][searchY].z && searchPoint.z > z) {
                     return true;
                 }
                 searchY = searchPoint.ySpaceEnd;
@@ -426,7 +426,7 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
             int searchX = x;
             while (searchX < ground.length) {
                 Point searchPoint = ground[searchX][previousY];
-                if (searchPoint.z > ground[searchX][y].z) {
+                if (searchPoint.z > ground[searchX][y].z && searchPoint.z > z) {
                     return true;
                 }
                 searchX = searchPoint.xSpaceEnd;
