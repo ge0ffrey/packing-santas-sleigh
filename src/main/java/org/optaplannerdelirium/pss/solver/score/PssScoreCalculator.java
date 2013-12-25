@@ -31,7 +31,7 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
 
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final static boolean ASSERT_MODE = true;
+    private final static boolean ASSERT_MODE = false;
 
     public static final int SLEIGH_X = 1000;
     public static final int SLEIGH_Y = 1000;
@@ -49,20 +49,26 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
         Point gridCorner = ground[0][0];
         addCorner(cornerSet, gridCorner);
         int presentIndex = 0;
+        int z = 0;
         while (presentAllocation != null) {
-            int minimalZ = findMinimalZ(cornerSet);
-            int z = minimalZ;
+            if (presentAllocation.getRotation() == null) {
+                break;
+            }
+            int previousZ = z;
             Point winner = null;
-            while (winner == null) {
-                z++;
+            while (true) {
                 winner = findWinnerForZ(ground, cornerSet, presentAllocation, z);
+                if (winner != null) {
+                    break;
+                }
+                z++;
             }
             place(ground, cornerSet, presentAllocation, winner.x, winner.y, z);
             if (logger.isTraceEnabled()) {
                 logger.trace("  Placed {}th present ({},{},{}) at point ({},{},{}) for {} z iterations and {} corners.", presentIndex,
                         presentAllocation.getXLength(), presentAllocation.getYLength(), presentAllocation.getZLength(),
-                        winner.x, winner.y, winner.z,
-                        z - minimalZ + 1, cornerSet.size());
+                        presentAllocation.getCalculatedX(), presentAllocation.getCalculatedY(), presentAllocation.getCalculatedZ(),
+                        z - previousZ + 1, cornerSet.size());
             }
             if (ASSERT_MODE) {
                 validateGround(ground, cornerSet);
@@ -173,6 +179,9 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
     }
 
     protected void place(Point[][] ground, SortedSet<Point> cornerSet, PresentAllocation presentAllocation, int xStart, int yStart, int zStart) {
+        presentAllocation.setCalculatedX(xStart);
+        presentAllocation.setCalculatedY(yStart);
+        presentAllocation.setCalculatedZ(zStart);
         int xEnd = xStart + presentAllocation.getXLength();
         int yEnd = yStart + presentAllocation.getYLength();
         int zEnd = zStart + presentAllocation.getZLength();

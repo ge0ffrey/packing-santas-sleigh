@@ -34,6 +34,11 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
     // Shadow variables
     private PresentAllocation nextPresentAllocation;
 
+    // HACK: shadow variables set by ScoreCalculator
+    private int calculatedX;
+    private int calculatedY;
+    private int calculatedZ;
+
     public Present getPresent() {
         return present;
     }
@@ -118,6 +123,30 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
             default:
                 throw new IllegalStateException("The rotation (" + rotation + ") is not implemented.");
         }
+    }
+
+    public int getCalculatedX() {
+        return calculatedX;
+    }
+
+    public void setCalculatedX(int calculatedX) {
+        this.calculatedX = calculatedX;
+    }
+
+    public int getCalculatedY() {
+        return calculatedY;
+    }
+
+    public void setCalculatedY(int calculatedY) {
+        this.calculatedY = calculatedY;
+    }
+
+    public int getCalculatedZ() {
+        return calculatedZ;
+    }
+
+    public void setCalculatedZ(int calculatedZ) {
+        this.calculatedZ = calculatedZ;
     }
 
     @Override
