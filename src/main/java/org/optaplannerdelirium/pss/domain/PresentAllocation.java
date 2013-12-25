@@ -17,6 +17,8 @@
 package org.optaplannerdelirium.pss.domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
@@ -32,11 +34,15 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
     private Allocation previousAllocation;
 
     // Shadow variables
+    @XStreamOmitField
     private PresentAllocation nextPresentAllocation;
 
     // HACK: shadow variables set by ScoreCalculator
+    @XStreamAsAttribute
     private int calculatedX;
+    @XStreamAsAttribute
     private int calculatedY;
+    @XStreamAsAttribute
     private int calculatedZ;
 
     public Present getPresent() {

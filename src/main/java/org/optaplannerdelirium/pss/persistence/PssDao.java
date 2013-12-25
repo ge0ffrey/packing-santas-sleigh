@@ -16,13 +16,29 @@
 
 package org.optaplannerdelirium.pss.persistence;
 
+import java.io.File;
+
+import org.optaplanner.core.impl.solution.Solution;
 import org.optaplanner.examples.common.persistence.XStreamSolutionDao;
+import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 
 public class PssDao extends XStreamSolutionDao {
 
     public PssDao() {
         super("pss", Sleigh.class);
+    }
+
+    @Override
+    public Solution readSolution(File inputSolutionFile) {
+        Sleigh sleigh = (Sleigh) super.readSolution(inputSolutionFile);
+        for (PresentAllocation presentAllocation : sleigh.getPresentAllocationList()) {
+            // Restore omitted field
+            if (presentAllocation.getPreviousAllocation() != null) {
+                presentAllocation.getPreviousAllocation().setNextPresentAllocation(presentAllocation);
+            }
+        }
+        return sleigh;
     }
 
 }
