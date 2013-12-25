@@ -53,6 +53,7 @@ public class PssExporter extends AbstractTxtSolutionExporter {
         }
 
         public void writeSolution() throws IOException {
+            bufferedWriter.write("PresentId,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,x5,y5,z5,x6,y6,z6,x7,y7,z7,x8,y8,z8\n");
             for (PresentAllocation presentAllocation : sleigh.getPresentAllocationList()) {
                 bufferedWriter.write(Long.toString(presentAllocation.getPresent().getId()));
                 int x = presentAllocation.getCalculatedX();
@@ -62,13 +63,13 @@ public class PssExporter extends AbstractTxtSolutionExporter {
                 int yLength = presentAllocation.getYLength();
                 int zLength = presentAllocation.getZLength();
                 writePoint(x, y, z);
-                writePoint(x + xLength, y, z);
-                writePoint(x, y + yLength, z);
-                writePoint(x + xLength, y + yLength, z);
-                writePoint(x, y, z + zLength);
-                writePoint(x + xLength, y, z + zLength);
-                writePoint(x, y + yLength, z + zLength);
-                writePoint(x + xLength, y + yLength, z + zLength);
+                writePoint(x + xLength - 1, y, z);
+                writePoint(x, y + yLength - 1, z);
+                writePoint(x + xLength - 1, y + yLength - 1, z);
+                writePoint(x, y, z + zLength - 1);
+                writePoint(x + xLength - 1, y, z + zLength - 1);
+                writePoint(x, y + yLength - 1, z + zLength - 1);
+                writePoint(x + xLength - 1, y + yLength - 1, z + zLength - 1);
                 bufferedWriter.write("\n");
             }
         }
