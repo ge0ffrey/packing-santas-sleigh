@@ -25,7 +25,7 @@ import org.optaplannerdelirium.pss.domain.Sleigh;
 
 public class PssExporter extends AbstractTxtSolutionExporter {
 
-    private static final String OUTPUT_FILE_SUFFIX = "sol.txt";
+    private static final String OUTPUT_FILE_SUFFIX = "sol.csv";
 
     public static void main(String[] args) {
         new PssExporter().convertAll();
