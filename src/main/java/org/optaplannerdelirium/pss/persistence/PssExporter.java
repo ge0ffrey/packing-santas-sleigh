@@ -75,11 +75,11 @@ public class PssExporter extends AbstractTxtSolutionExporter {
 
         public void writePoint(int x, int y, int z) throws IOException {
             bufferedWriter.write(",");
-            bufferedWriter.write(x);
+            bufferedWriter.write(Integer.toString(x));
             bufferedWriter.write(",");
-            bufferedWriter.write(y);
+            bufferedWriter.write(Integer.toString(y));
             bufferedWriter.write(",");
-            bufferedWriter.write(z);
+            bufferedWriter.write(Integer.toString(z));
         }
 
     }
