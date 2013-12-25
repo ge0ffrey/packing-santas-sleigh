@@ -56,20 +56,21 @@ public class PssExporter extends AbstractTxtSolutionExporter {
             bufferedWriter.write("PresentId,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,x5,y5,z5,x6,y6,z6,x7,y7,z7,x8,y8,z8\n");
             for (PresentAllocation presentAllocation : sleigh.getPresentAllocationList()) {
                 bufferedWriter.write(Long.toString(presentAllocation.getPresent().getId()));
-                int x = presentAllocation.getCalculatedX();
-                int y = presentAllocation.getCalculatedY();
-                int z = presentAllocation.getCalculatedZ();
-                int xLength = presentAllocation.getXLength();
-                int yLength = presentAllocation.getYLength();
-                int zLength = presentAllocation.getZLength();
+                // Origin is 1, 1, 1 (not 0, 0, 0)
+                int x = presentAllocation.getCalculatedX() + 1;
+                int y = presentAllocation.getCalculatedY() + 1;
+                int z = presentAllocation.getCalculatedZ() + 1;
+                int xLength = presentAllocation.getXLength() - 1;
+                int yLength = presentAllocation.getYLength() - 1;
+                int zLength = presentAllocation.getZLength() - 1;
                 writePoint(x, y, z);
-                writePoint(x + xLength - 1, y, z);
-                writePoint(x, y + yLength - 1, z);
-                writePoint(x + xLength - 1, y + yLength - 1, z);
-                writePoint(x, y, z + zLength - 1);
-                writePoint(x + xLength - 1, y, z + zLength - 1);
-                writePoint(x, y + yLength - 1, z + zLength - 1);
-                writePoint(x + xLength - 1, y + yLength - 1, z + zLength - 1);
+                writePoint(x + xLength, y, z);
+                writePoint(x, y + yLength, z);
+                writePoint(x + xLength, y + yLength, z);
+                writePoint(x, y, z + zLength);
+                writePoint(x + xLength, y, z + zLength);
+                writePoint(x, y + yLength, z + zLength);
+                writePoint(x + xLength , y + yLength, z + zLength);
                 bufferedWriter.write("\n");
             }
         }
