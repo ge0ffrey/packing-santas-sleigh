@@ -12,6 +12,10 @@
   <!--<termination>-->
     <!--<maximumMinutesSpend>2</maximumMinutesSpend>-->
   <!--</termination>-->
+  <customSolverPhase>
+    <customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.custom.ZXYRotator</customSolverPhaseCommandClass>
+    <forceUpdateBestSolution>true</forceUpdateBestSolution>
+  </customSolverPhase>
   <localSearch>
     <unionMoveSelector>
       <changeMoveSelector>
@@ -22,14 +26,14 @@
           <variableName>rotation</variableName>
         </valueSelector>
       </changeMoveSelector>
-      <changeMoveSelector>
-        <entitySelector>
-          <cacheType>PHASE</cacheType>
-        </entitySelector>
-        <valueSelector>
-          <variableName>previousAllocation</variableName>
-        </valueSelector>
-      </changeMoveSelector>
+      <!--<changeMoveSelector>-->
+        <!--<entitySelector>-->
+          <!--<cacheType>PHASE</cacheType>-->
+        <!--</entitySelector>-->
+        <!--<valueSelector>-->
+          <!--<variableName>previousAllocation</variableName>-->
+        <!--</valueSelector>-->
+      <!--</changeMoveSelector>-->
       <!--<subChainChangeMoveSelector>-->
         <!--<subChainSelector>-->
           <!--<maximumSubChainSize>20</maximumSubChainSize>-->
