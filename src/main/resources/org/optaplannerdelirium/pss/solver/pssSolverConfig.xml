@@ -18,36 +18,43 @@
     <!--<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.custom.XYZRotator</customSolverPhaseCommandClass>-->
     <forceUpdateBestSolution>true</forceUpdateBestSolution>
   </customSolverPhase>
-  <!--<localSearch>-->
-    <!--<unionMoveSelector>-->
+  <localSearch>
+    <unionMoveSelector>
+      <changeMoveSelector>
+        <entitySelector>
+          <cacheType>PHASE</cacheType>
+        </entitySelector>
+        <valueSelector>
+          <variableName>rotation</variableName>
+        </valueSelector>
+      </changeMoveSelector>
       <!--<changeMoveSelector>-->
         <!--<entitySelector>-->
           <!--<cacheType>PHASE</cacheType>-->
         <!--</entitySelector>-->
         <!--<valueSelector>-->
-          <!--<variableName>rotation</variableName>-->
+          <!--<variableName>previousAllocation</variableName>-->
         <!--</valueSelector>-->
       <!--</changeMoveSelector>-->
-      <!--&lt;!&ndash;<changeMoveSelector>&ndash;&gt;-->
-        <!--&lt;!&ndash;<entitySelector>&ndash;&gt;-->
-          <!--&lt;!&ndash;<cacheType>PHASE</cacheType>&ndash;&gt;-->
-        <!--&lt;!&ndash;</entitySelector>&ndash;&gt;-->
-        <!--&lt;!&ndash;<valueSelector>&ndash;&gt;-->
-          <!--&lt;!&ndash;<variableName>previousAllocation</variableName>&ndash;&gt;-->
-        <!--&lt;!&ndash;</valueSelector>&ndash;&gt;-->
-      <!--&lt;!&ndash;</changeMoveSelector>&ndash;&gt;-->
-      <!--&lt;!&ndash;<subChainChangeMoveSelector>&ndash;&gt;-->
-        <!--&lt;!&ndash;<subChainSelector>&ndash;&gt;-->
-          <!--&lt;!&ndash;<maximumSubChainSize>20</maximumSubChainSize>&ndash;&gt;-->
-        <!--&lt;!&ndash;</subChainSelector>&ndash;&gt;-->
-        <!--&lt;!&ndash;<selectReversingMoveToo>false</selectReversingMoveToo>&ndash;&gt;-->
-      <!--&lt;!&ndash;</subChainChangeMoveSelector>&ndash;&gt;-->
-    <!--</unionMoveSelector>-->
+      <!--<subChainChangeMoveSelector>-->
+        <!--<subChainSelector>-->
+          <!--<maximumSubChainSize>20</maximumSubChainSize>-->
+        <!--</subChainSelector>-->
+        <!--<selectReversingMoveToo>false</selectReversingMoveToo>-->
+      <!--</subChainChangeMoveSelector>-->
+    </unionMoveSelector>
+    <acceptor>
+      <lateAcceptanceSize>10</lateAcceptanceSize>
+    </acceptor>
+    <forager>
+      <acceptedCountLimit>1</acceptedCountLimit>
+    </forager>
     <!--<acceptor>-->
-      <!--<lateAcceptanceSize>200</lateAcceptanceSize>-->
+      <!--<entityTabuSize>10</entityTabuSize>-->
     <!--</acceptor>-->
     <!--<forager>-->
-      <!--<acceptedCountLimit>1</acceptedCountLimit>-->
+      <!--<pickEarlyType>FIRST_LAST_STEP_SCORE_IMPROVING</pickEarlyType>-->
+      <!--<acceptedCountLimit>100</acceptedCountLimit>-->
     <!--</forager>-->
-  <!--</localSearch>-->
+  </localSearch>
 </solver>
