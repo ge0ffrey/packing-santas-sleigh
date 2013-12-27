@@ -103,6 +103,7 @@ public class PssImporter extends AbstractTxtSolutionImporter {
                 PresentAllocation presentAllocation = new PresentAllocation();
                 presentAllocation.setId(present.getId());
                 presentAllocation.setPresent(present);
+                presentAllocation.setLocked(false);
                 presentAllocationList.add(presentAllocation);
             }
             sleigh.setPresentAllocationList(presentAllocationList);

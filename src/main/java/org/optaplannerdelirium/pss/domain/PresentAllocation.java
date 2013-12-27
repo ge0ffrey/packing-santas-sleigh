@@ -22,12 +22,14 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
+import org.optaplannerdelirium.pss.domain.solver.MovablePresentAllocationSelectionFilter;
 
-@PlanningEntity()
+@PlanningEntity(movableEntitySelectionFilter = MovablePresentAllocationSelectionFilter.class)
 @XStreamAlias("PssPresentAllocation")
 public class PresentAllocation extends AbstractPersistable implements Allocation {
 
     private Present present;
+    private boolean locked;
 
     // Planning variables: changes during planning, between score calculations.
     private Rotation rotation;
@@ -51,6 +53,14 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
 
     public void setPresent(Present present) {
         this.present = present;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     @PlanningVariable(valueRangeProviderRefs = {"rotationRange"})

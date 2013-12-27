@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-package org.optaplannerdelirium.pss.solver.custom;
+package org.optaplannerdelirium.pss.solver.initializer;
 
 import org.optaplanner.core.impl.phase.custom.CustomSolverPhaseCommand;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import org.optaplannerdelirium.pss.domain.Rotation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
+import org.optaplannerdelirium.pss.domain.solver.MovablePresentAllocationSelectionFilter;
 
 public class NoRotator implements CustomSolverPhaseCommand {
+
+    private MovablePresentAllocationSelectionFilter filter = new MovablePresentAllocationSelectionFilter();
 
     @Override
     public void changeWorkingSolution(ScoreDirector scoreDirector) {
         Sleigh sleigh = (Sleigh) scoreDirector.getWorkingSolution();
         for (PresentAllocation presentAllocation : sleigh.getPresentAllocationList()) {
-            scoreDirector.beforeVariableChanged(presentAllocation, "rotation");
-            presentAllocation.setRotation(Rotation.AXBYCZ);
-            scoreDirector.afterVariableChanged(presentAllocation, "rotation");
+            if (filter.accept(scoreDirector, presentAllocation)) {
+                scoreDirector.beforeVariableChanged(presentAllocation, "rotation");
+                presentAllocation.setRotation(Rotation.AXBYCZ);
+                scoreDirector.afterVariableChanged(presentAllocation, "rotation");
+            }
         }
     }
 

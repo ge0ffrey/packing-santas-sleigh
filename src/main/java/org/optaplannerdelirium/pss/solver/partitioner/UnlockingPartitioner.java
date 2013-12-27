@@ -14,42 +14,48 @@
  * limitations under the License.
  */
 
-package org.optaplannerdelirium.pss.solver.custom;
+package org.optaplannerdelirium.pss.solver.partitioner;
 
 import org.optaplanner.core.impl.phase.custom.CustomSolverPhaseCommand;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import org.optaplannerdelirium.pss.domain.Rotation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
+import org.optaplannerdelirium.pss.domain.solver.MovablePresentAllocationSelectionFilter;
 
-public class XYZRotator implements CustomSolverPhaseCommand {
+public class UnlockingPartitioner implements CustomSolverPhaseCommand {
+
+    private long from = 0;
+    private long to = 1000;
+
+    public long getFrom() {
+        return from;
+    }
+
+    public void setFrom(long from) {
+        this.from = from;
+    }
+
+    public long getTo() {
+        return to;
+    }
+
+    public void setTo(long to) {
+        this.to = to;
+    }
 
     @Override
     public void changeWorkingSolution(ScoreDirector scoreDirector) {
         Sleigh sleigh = (Sleigh) scoreDirector.getWorkingSolution();
         for (PresentAllocation presentAllocation : sleigh.getPresentAllocationList()) {
-            int a = presentAllocation.getPresent().getA();
-            int b = presentAllocation.getPresent().getB();
-            int c = presentAllocation.getPresent().getC();
-            Rotation rotation;
-            if (a >= b && b >= c) {
-                rotation = Rotation.AXBYCZ;
-            } else if (a >= c && c >= b) {
-                rotation = Rotation.AXBZCY;
-            } else if (b >= a && a >= c) {
-                rotation = Rotation.AYBXCZ;
-            } else if (c >= a && a >= b) {
-                rotation = Rotation.AYBZCX;
-            } else if (b >= c && c >= a) {
-                rotation = Rotation.AZBXCY;
-            } else if (c >= b && b >= a) {
-                rotation = Rotation.AZBYCX;
-            } else {
-                throw new IllegalStateException("Impossible");
-            }
-            scoreDirector.beforeVariableChanged(presentAllocation, "rotation");
-            presentAllocation.setRotation(rotation);
-            scoreDirector.afterVariableChanged(presentAllocation, "rotation");
+            Long id = presentAllocation.getId();
+            // Weird logic because the id's start from 1 instead of 0.
+            boolean locked = !(id > from && id <= to);
+            // Locked is not a variable
+            // HACK: we don't call problemFactChanged to avoid unneeded code execution ...
+            // scoreDirector.beforeProblemFactChanged(presentAllocation);
+            presentAllocation.setLocked(locked);
+            // scoreDirector.beforeProblemFactChanged(presentAllocation);
         }
     }
 
