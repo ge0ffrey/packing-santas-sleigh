@@ -23,10 +23,10 @@ import org.optaplannerdelirium.pss.domain.Rotation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 import org.optaplannerdelirium.pss.domain.solver.MovablePresentAllocationSelectionFilter;
 
-public class UnlockingPartitioner implements CustomSolverPhaseCommand {
+public class LockingPartitioner implements CustomSolverPhaseCommand {
 
     private long from = 0;
-    private long to = 1000;
+    private long to = 100;
 
     public long getFrom() {
         return from;
