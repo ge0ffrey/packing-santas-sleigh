@@ -53,13 +53,14 @@ public class PssExporter extends AbstractTxtSolutionExporter {
         }
 
         public void writeSolution() throws IOException {
+            int maxZ = findMaxZ();
             bufferedWriter.write("PresentId,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,x5,y5,z5,x6,y6,z6,x7,y7,z7,x8,y8,z8\n");
             for (PresentAllocation presentAllocation : sleigh.getPresentAllocationList()) {
                 bufferedWriter.write(Long.toString(presentAllocation.getPresent().getId()));
                 // Origin is 1, 1, 1 (not 0, 0, 0)
                 int x = presentAllocation.getCalculatedX() + 1;
                 int y = presentAllocation.getCalculatedY() + 1;
-                int z = presentAllocation.getCalculatedZ() + 1;
+                int z = maxZ - presentAllocation.getZLength() - presentAllocation.getCalculatedZ() + 1;
                 int xLength = presentAllocation.getXLength() - 1;
                 int yLength = presentAllocation.getYLength() - 1;
                 int zLength = presentAllocation.getZLength() - 1;
@@ -73,6 +74,17 @@ public class PssExporter extends AbstractTxtSolutionExporter {
                 writePoint(x + xLength , y + yLength, z + zLength);
                 bufferedWriter.write("\n");
             }
+        }
+
+        private int findMaxZ() {
+            int maxZ = 0;
+            for (PresentAllocation presentAllocation : sleigh.getPresentAllocationList()) {
+                int endZ = presentAllocation.getCalculatedZ() + presentAllocation.getZLength();
+                if (endZ > maxZ) {
+                    maxZ = endZ;
+                }
+            }
+            return maxZ;
         }
 
         public void writePoint(int x, int y, int z) throws IOException {

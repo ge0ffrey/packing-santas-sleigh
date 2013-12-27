@@ -18,6 +18,7 @@ package org.optaplannerdelirium.pss.persistence;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.optaplanner.core.impl.solution.Solution;
@@ -60,6 +61,7 @@ public class PssImporter extends AbstractTxtSolutionImporter {
             readPresentList();
             createAnchorAllocation();
             createPresentAllocationList();
+            assignPresentAllocationList();
             logger.info("Sleigh {} has {} presents.",
                     getInputId(),
                     sleigh.getPresentList().size());
@@ -97,18 +99,23 @@ public class PssImporter extends AbstractTxtSolutionImporter {
         private void createPresentAllocationList() {
             List<Present> presentList = sleigh.getPresentList();
             List<PresentAllocation> presentAllocationList = new ArrayList<PresentAllocation>(presentList.size());
-            Allocation previousAllocation = sleigh.getAnchorAllocation();
             for (Present present : presentList) {
                 PresentAllocation presentAllocation = new PresentAllocation();
                 presentAllocation.setId(present.getId());
                 presentAllocation.setPresent(present);
+                presentAllocationList.add(presentAllocation);
+            }
+            sleigh.setPresentAllocationList(presentAllocationList);
+        }
+
+        private void assignPresentAllocationList() {
+            Allocation previousAllocation = sleigh.getAnchorAllocation();
+            for (PresentAllocation presentAllocation : sleigh.getPresentAllocationList()) {
                 presentAllocation.setRotation(null);
                 presentAllocation.setPreviousAllocation(previousAllocation);
                 previousAllocation.setNextPresentAllocation(presentAllocation);
-                presentAllocationList.add(presentAllocation);
                 previousAllocation = presentAllocation;
             }
-            sleigh.setPresentAllocationList(presentAllocationList);
         }
 
     }
