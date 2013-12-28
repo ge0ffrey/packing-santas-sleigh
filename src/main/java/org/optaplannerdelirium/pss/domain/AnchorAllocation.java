@@ -16,10 +16,8 @@
 
 package org.optaplannerdelirium.pss.domain;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 
-@XStreamAlias("PssAnchor")
 public class AnchorAllocation extends AbstractPersistable implements Allocation {
 
     private PresentAllocation nextPresentAllocation;

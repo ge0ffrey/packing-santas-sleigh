@@ -16,18 +16,12 @@
 
 package org.optaplannerdelirium.pss.domain;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 
-@XStreamAlias("PssPresent")
 public class Present extends AbstractPersistable {
 
-    @XStreamAsAttribute
     private int a; // Dimension 1
-    @XStreamAsAttribute
     private int b; // Dimension 2
-    @XStreamAsAttribute
     private int c; // Dimension 3
 
     public int getA() {

@@ -22,6 +22,8 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 @PlanningEntity
 public interface Allocation {
 
+    Long getId();
+
     @PlanningVariable(mappedBy = "previousAllocation")
     PresentAllocation getNextPresentAllocation();
     void setNextPresentAllocation(PresentAllocation nextPresentAllocation);
