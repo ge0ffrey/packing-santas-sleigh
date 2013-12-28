@@ -157,6 +157,7 @@ public class PssDao extends AbstractSolutionDao {
                             + presentAllocation + ") cannot be null.");
                 }
                 presentAllocation.setPreviousAllocation(previousAllocation);
+                previousAllocation.setNextPresentAllocation(presentAllocation);
             }
             sleigh.setPresentList(presentList);
             sleigh.setPresentAllocationList(presentAllocationList);
