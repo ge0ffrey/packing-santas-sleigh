@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2013 JBoss Inc
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<solver>
+  <solutionClass>org.optaplannerdelirium.pss.domain.Sleigh</solutionClass>
+  <planningEntityClass>org.optaplannerdelirium.pss.domain.PresentAllocation</planningEntityClass>
+  <planningEntityClass>org.optaplannerdelirium.pss.domain.Allocation</planningEntityClass>
+
+  <scoreDirectorFactory>
+    <scoreDefinitionType>SIMPLE</scoreDefinitionType>
+    <simpleScoreCalculatorClass>org.optaplannerdelirium.pss.solver.score.PssScoreCalculator</simpleScoreCalculatorClass>
+  </scoreDirectorFactory>
+
+  <!--<termination>-->
+    <!--<maximumMinutesSpend>2</maximumMinutesSpend>-->
+  <!--</termination>-->
+  <lockingPartitionerConfig>
+    <from>0</from>
+    <to>100</to>
+  </lockingPartitionerConfig>
+  <customSolverPhase>
+    <!--<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.NoRotator</customSolverPhaseCommandClass>-->
+    <customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.ZXYRotator</customSolverPhaseCommandClass>
+    <!--<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.XYZRotator</customSolverPhaseCommandClass>-->
+    <forceUpdateBestSolution>true</forceUpdateBestSolution>
+  </customSolverPhase>
+  <localSearch>
+    <unionMoveSelector>
+      <changeMoveSelector>
+        <entitySelector>
+          <cacheType>PHASE</cacheType>
+        </entitySelector>
+        <valueSelector>
+          <variableName>rotation</variableName>
+        </valueSelector>
+      </changeMoveSelector>
+      <!--<changeMoveSelector>-->
+        <!--<entitySelector>-->
+          <!--<cacheType>PHASE</cacheType>-->
+        <!--</entitySelector>-->
+        <!--<valueSelector>-->
+          <!--<variableName>previousAllocation</variableName>-->
+        <!--</valueSelector>-->
+      <!--</changeMoveSelector>-->
+      <!--<subChainChangeMoveSelector>-->
+        <!--<subChainSelector>-->
+          <!--<maximumSubChainSize>20</maximumSubChainSize>-->
+        <!--</subChainSelector>-->
+        <!--<selectReversingMoveToo>false</selectReversingMoveToo>-->
+      <!--</subChainChangeMoveSelector>-->
+    </unionMoveSelector>
+    <acceptor>
+      <lateAcceptanceSize>10</lateAcceptanceSize>
+    </acceptor>
+    <forager>
+      <acceptedCountLimit>1</acceptedCountLimit>
+    </forager>
+    <!--<acceptor>-->
+      <!--<entityTabuSize>10</entityTabuSize>-->
+    <!--</acceptor>-->
+    <!--<forager>-->
+      <!--<pickEarlyType>FIRST_LAST_STEP_SCORE_IMPROVING</pickEarlyType>-->
+      <!--<acceptedCountLimit>100</acceptedCountLimit>-->
+    <!--</forager>-->
+  </localSearch>
+</solver>
