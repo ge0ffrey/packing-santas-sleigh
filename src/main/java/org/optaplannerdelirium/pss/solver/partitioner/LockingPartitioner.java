@@ -25,23 +25,20 @@ import org.optaplannerdelirium.pss.domain.solver.MovablePresentAllocationSelecti
 
 public class LockingPartitioner implements CustomSolverPhaseCommand {
 
-    private long from = 0;
-    private long to = 100;
+    private final long from;
+    private final long to;
+
+    public LockingPartitioner(long from, long to) {
+        this.from = from;
+        this.to = to;
+    }
 
     public long getFrom() {
         return from;
     }
 
-    public void setFrom(long from) {
-        this.from = from;
-    }
-
     public long getTo() {
         return to;
-    }
-
-    public void setTo(long to) {
-        this.to = to;
     }
 
     @Override

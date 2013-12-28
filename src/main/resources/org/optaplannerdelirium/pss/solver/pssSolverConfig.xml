@@ -12,10 +12,10 @@
   <!--<termination>-->
     <!--<maximumMinutesSpend>2</maximumMinutesSpend>-->
   <!--</termination>-->
-  <customSolverPhase>
-    <customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.partitioner.LockingPartitioner</customSolverPhaseCommandClass>
-    <forceUpdateBestSolution>true</forceUpdateBestSolution>
-  </customSolverPhase>
+  <lockingPartitionerConfig>
+    <from>0</from>
+    <to>100</to>
+  </lockingPartitionerConfig>
   <customSolverPhase>
     <!--<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.NoRotator</customSolverPhaseCommandClass>-->
     <customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.ZXYRotator</customSolverPhaseCommandClass>

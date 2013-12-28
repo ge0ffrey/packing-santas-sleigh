@@ -26,6 +26,7 @@ import org.optaplanner.examples.common.swingui.SolutionPanel;
 import org.optaplannerdelirium.pss.persistence.PssDao;
 import org.optaplannerdelirium.pss.persistence.PssExporter;
 import org.optaplannerdelirium.pss.persistence.PssImporter;
+import org.optaplannerdelirium.pss.solver.partitioner.LockingPartitionerConfig;
 import org.optaplannerdelirium.pss.swingui.PssPanel;
 
 public class PssApp extends CommonApp {
@@ -46,7 +47,9 @@ public class PssApp extends CommonApp {
 
     @Override
     protected Solver createSolver() {
-        XmlSolverFactory solverFactory = new XmlSolverFactory(SOLVER_CONFIG);
+        XmlSolverFactory solverFactory = new XmlSolverFactory();
+        solverFactory.addXstreamAnnotations(LockingPartitionerConfig.class);
+        solverFactory.configure(SOLVER_CONFIG);
         return solverFactory.buildSolver();
     }
 
