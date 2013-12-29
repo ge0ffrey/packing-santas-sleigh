@@ -106,7 +106,7 @@ public class PssIncrementalScoreCalculator extends AbstractIncrementalScoreCalcu
         }
         for (int x = SLEIGH_X - 1; x >= 0; x--) {
             lockedGround[x][SLEIGH_Y - 1].ySpaceEnd = SLEIGH_Y;
-            for (int y = SLEIGH_Y - 1; y >= 0; y--) {
+            for (int y = SLEIGH_Y - 2; y >= 0; y--) {
                 Point point = lockedGround[x][y];
                 Point followingPoint = lockedGround[x][y + 1];
                 while (true) {
