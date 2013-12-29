@@ -65,7 +65,7 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
             }
             place(ground, cornerSet, presentAllocation, winner.x, winner.y, z);
             if (logger.isTraceEnabled()) {
-                logger.trace("  Placed {}th present ({},{},{}) at point ({},{},{}) for {} z iterations and {} corners.", presentIndex,
+                logger.trace("            Placed {}th present ({},{},{}) at point ({},{},{}) for {} z iterations and {} corners.", presentIndex,
                         presentAllocation.getXLength(), presentAllocation.getYLength(), presentAllocation.getZLength(),
                         presentAllocation.getCalculatedX(), presentAllocation.getCalculatedY(), presentAllocation.getCalculatedZ(),
                         z - previousZ + 1, cornerSet.size());

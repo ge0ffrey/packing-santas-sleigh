@@ -90,13 +90,14 @@ public class PssPartitionedApp extends LoggingMain {
         long availableTimeMillisPerPartition = availableTimeMillis / (long) partitionCount;
 
         List<SolverPhaseConfig> oldSolverPhaseConfigList = solverConfig.getSolverPhaseConfigList();
-        if (oldSolverPhaseConfigList.size() != 3){
+        if (oldSolverPhaseConfigList.size() != 4) {
             throw new IllegalStateException("Invalid oldSolverPhaseConfigList size ("
                     + oldSolverPhaseConfigList.size() + ").");
         }
         LockingPartitionerConfig oldLockingPartitionerConfig = (LockingPartitionerConfig) oldSolverPhaseConfigList.get(0);
         CustomSolverPhaseConfig oldInitializerConfig = (CustomSolverPhaseConfig) oldSolverPhaseConfigList.get(1);
         LocalSearchSolverPhaseConfig oldLocalSearchConfig = (LocalSearchSolverPhaseConfig) oldSolverPhaseConfigList.get(2);
+        CustomSolverPhaseConfig oldRefreshCalculatedConfig = (CustomSolverPhaseConfig) oldSolverPhaseConfigList.get(3);
         TerminationConfig oldTerminationConfig = oldLocalSearchConfig.getTerminationConfig();
         if (oldTerminationConfig == null) {
             oldTerminationConfig = new TerminationConfig();
@@ -107,10 +108,10 @@ public class PssPartitionedApp extends LoggingMain {
         for (int partitionIndex = 0; partitionIndex < partitionCount; partitionIndex++) {
             LockingPartitionerConfig newLockingPartitionerConfig = new LockingPartitionerConfig();
             newLockingPartitionerConfig.inherit(oldLockingPartitionerConfig);
-            int from = Math.max(0, (partitionIndex - partitionJoinCount + 1) * partitionOffsetIncrement);
-            int to = Math.min(presentSize, from + (partitionJoinCount * partitionOffsetIncrement));
-            newLockingPartitionerConfig.setFrom((long) from);
-            newLockingPartitionerConfig.setTo((long) to);
+            int from = (partitionIndex - partitionJoinCount + 1) * partitionOffsetIncrement;
+            int to = from + (partitionJoinCount * partitionOffsetIncrement);
+            newLockingPartitionerConfig.setFrom((long) Math.max(0, from));
+            newLockingPartitionerConfig.setTo((long) Math.min(presentSize, to));
             newSolverPhaseConfigList.add(newLockingPartitionerConfig);
             CustomSolverPhaseConfig newInitializerConfig = new CustomSolverPhaseConfig();
             newInitializerConfig.inherit(oldInitializerConfig);
@@ -118,6 +119,9 @@ public class PssPartitionedApp extends LoggingMain {
             LocalSearchSolverPhaseConfig newLocalSearchConfig = new LocalSearchSolverPhaseConfig();
             newLocalSearchConfig.inherit(oldLocalSearchConfig);
             newSolverPhaseConfigList.add(oldLocalSearchConfig);
+            CustomSolverPhaseConfig newRefreshCalculatedConfig = new CustomSolverPhaseConfig();
+            newRefreshCalculatedConfig.inherit(oldRefreshCalculatedConfig);
+            newSolverPhaseConfigList.add(newRefreshCalculatedConfig);
         }
         solverConfig.setSolverPhaseConfigList(newSolverPhaseConfigList);
         return solverFactory.buildSolver();

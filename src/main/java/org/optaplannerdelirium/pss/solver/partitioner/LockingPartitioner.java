@@ -22,8 +22,12 @@ import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import org.optaplannerdelirium.pss.domain.Rotation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 import org.optaplannerdelirium.pss.domain.solver.MovablePresentAllocationSelectionFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LockingPartitioner implements CustomSolverPhaseCommand {
+
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private final long from;
     private final long to;
@@ -54,6 +58,7 @@ public class LockingPartitioner implements CustomSolverPhaseCommand {
             presentAllocation.setLocked(locked);
             // scoreDirector.beforeProblemFactChanged(presentAllocation);
         }
+        logger.debug("    Partitioned from ({}) to ({}).", from, to);
     }
 
 }
