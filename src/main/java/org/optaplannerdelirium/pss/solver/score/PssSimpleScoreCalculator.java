@@ -21,13 +21,14 @@ import java.util.TreeSet;
 
 import org.optaplanner.core.api.score.buildin.simple.SimpleScore;
 import org.optaplanner.core.impl.score.director.simple.SimpleScoreCalculator;
+import org.optaplannerdelirium.pss.domain.Allocation;
 import org.optaplannerdelirium.pss.domain.AnchorAllocation;
 import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
+public class PssSimpleScoreCalculator implements SimpleScoreCalculator<Sleigh> {
 
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -38,16 +39,21 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
 
     public SimpleScore calculateScore(Sleigh sleigh) {
         AnchorAllocation anchorAllocation = sleigh.getAnchorAllocation();
-        PresentAllocation presentAllocation = anchorAllocation.getNextPresentAllocation();
         Point[][] ground = new Point[SLEIGH_X][SLEIGH_Y];
-        for (int i = 0; i < SLEIGH_X; i++) {
-            for (int j = 0; j < SLEIGH_Y; j++) {
-                ground[i][j] = new Point(i, j);
+        for (int x = 0; x < SLEIGH_X; x++) {
+            for (int y = 0; y < SLEIGH_Y; y++) {
+                ground[x][y] = new Point(x, y);
             }
         }
         SortedSet<Point> cornerSet = new TreeSet<Point>();
         Point gridCorner = ground[0][0];
         addCorner(cornerSet, gridCorner);
+
+        return calculateScore(ground, cornerSet, anchorAllocation);
+    }
+
+    public SimpleScore calculateScore(Point[][] ground, SortedSet<Point> cornerSet, Allocation lastLockedAllocation) {
+        PresentAllocation presentAllocation = lastLockedAllocation.getNextPresentAllocation();
         int presentIndex = 0;
         int z = 0;
         while (presentAllocation != null) {
@@ -322,132 +328,6 @@ public class PssScoreCalculator implements SimpleScoreCalculator<Sleigh> {
                 }
             }
         }
-    }
-
-    protected void printGround(Point[][] ground) {
-        printGround(ground, 0, 0, ground.length, ground[0].length);
-    }
-
-    protected void printGround(Point[][] ground, int xStart, int xEnd, int yStart, int yEnd) {
-        System.out.println("       z, xSpaceEnd, ySpaceEnd");
-        System.out.print("       ");
-        for (int x = xStart; x < xEnd; x++) {
-            printNumber(x);
-        }
-        System.out.print("       ");
-        for (int x = xStart; x < xEnd; x++) {
-            printNumber(x);
-        }
-        System.out.print("       ");
-        for (int x = xStart; x < xEnd; x++) {
-            printNumber(x);
-        }
-        System.out.println("");
-        System.out.println("       ----");
-        for (int y = yEnd - 1; y >= yStart; y--) {
-            printNumber(y);
-            System.out.print(":");
-            for (int x = xStart; x < xEnd; x++) {
-                printNumber(ground[x][y].z);
-            }
-            System.out.print("       ");
-            for (int x = xStart; x < xEnd; x++) {
-                printNumber(ground[x][y].xSpaceEnd);
-            }
-            System.out.print("       ");
-            for (int x = xStart; x < xEnd; x++) {
-                printNumber(ground[x][y].ySpaceEnd);
-            }
-            System.out.println("");
-        }
-    }
-
-    private void printNumber(int number) {
-        String s = Integer.toString(number);
-        System.out.print(s);
-        for (int i = s.length(); i < 6; i++) {
-            System.out.print(" ");
-        }
-    }
-
-    protected static class Point implements Comparable<Point> {
-
-        public int x;
-        public int y;
-
-        // Changes
-        public int z;
-        public int xSpaceEnd;
-        public int ySpaceEnd;
-        public boolean cornerMark;
-
-        protected Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-            z = 0;
-            xSpaceEnd = SLEIGH_X;
-            ySpaceEnd = SLEIGH_Y;
-            cornerMark = false;
-        }
-
-        @Override
-        public int compareTo(Point other) {
-            if (y < other.y) {
-                return -1;
-            } else if (y > other.y) {
-                return 1;
-            } else {
-                if (x < other.x) {
-                    return -1;
-                } else if (x > other.x) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        }
-
-        public boolean isCorner(Point[][] ground) {
-            return isCornerX(ground) && isCornerY(ground);
-        }
-
-        public boolean isCornerX(Point[][] ground) {
-            if (x == 0) {
-                return true;
-            }
-            int previousX = x - 1;
-            int searchY = y;
-            while (searchY < ground[previousX].length) {
-                Point searchPoint = ground[previousX][searchY];
-                if (searchPoint.z > ground[x][searchY].z && searchPoint.z > z) {
-                    return true;
-                }
-                searchY = searchPoint.ySpaceEnd;
-            }
-            return false;
-        }
-
-        public boolean isCornerY(Point[][] ground) {
-            if (y == 0) {
-                return true;
-            }
-            int previousY = y - 1;
-            int searchX = x;
-            while (searchX < ground.length) {
-                Point searchPoint = ground[searchX][previousY];
-                if (searchPoint.z > ground[searchX][y].z && searchPoint.z > z) {
-                    return true;
-                }
-                searchX = searchPoint.xSpaceEnd;
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "(" + x + "," + y + ")";
-        }
-
     }
 
 }

@@ -24,17 +24,17 @@ import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class PssScoreCalculatorTest {
+public class PssSimpleScoreCalculatorTest {
 
     @Test
     public void fits() {
-        PssScoreCalculator scoreCalculator = new PssScoreCalculator();
+        PssSimpleScoreCalculator scoreCalculator = new PssSimpleScoreCalculator();
         PresentAllocation presentAllocation = mock(PresentAllocation.class);
         when(presentAllocation.getXLength()).thenReturn(2);
         when(presentAllocation.getYLength()).thenReturn(3);
         when(presentAllocation.getZLength()).thenReturn(7);
 
-        PssScoreCalculator.Point[][] ground = createGround(transpose(new int[][]{
+        Point[][] ground = createGround(transpose(new int[][]{
                 {1, 0, 0, 2, 0},
                 {1, 0, 0, 1, 0},
                 {0, 0, 0, 3, 3},
@@ -93,20 +93,20 @@ public class PssScoreCalculatorTest {
 
     @Test
     public void place_0_0() {
-        PssScoreCalculator scoreCalculator = new PssScoreCalculator();
+        PssSimpleScoreCalculator scoreCalculator = new PssSimpleScoreCalculator();
         PresentAllocation presentAllocation = mock(PresentAllocation.class);
         when(presentAllocation.getXLength()).thenReturn(2);
         when(presentAllocation.getYLength()).thenReturn(3);
         when(presentAllocation.getZLength()).thenReturn(7);
 
-        PssScoreCalculator.Point[][] ground = createGround(transpose(new int[][]{
+        Point[][] ground = createGround(transpose(new int[][]{
                 {1, 0, 0, 2, 0},
                 {1, 0, 0, 1, 0},
                 {0, 0, 0, 3, 3},
                 {0, 0, 1, 4, 3},
                 {0, 0, 0, 1, 2},
         }));
-        SortedSet<PssScoreCalculator.Point> cornerSet = mock(SortedSet.class);
+        SortedSet<Point> cornerSet = mock(SortedSet.class);
         scoreCalculator.place(ground, cornerSet, presentAllocation, 0, 0, 1);
         assertPlacement(transpose(new int[][]{
                 {8, 8, 0, 2, 0},
@@ -131,20 +131,20 @@ public class PssScoreCalculatorTest {
 
     @Test
     public void place_1_0() {
-        PssScoreCalculator scoreCalculator = new PssScoreCalculator();
+        PssSimpleScoreCalculator scoreCalculator = new PssSimpleScoreCalculator();
         PresentAllocation presentAllocation = mock(PresentAllocation.class);
         when(presentAllocation.getXLength()).thenReturn(2);
         when(presentAllocation.getYLength()).thenReturn(3);
         when(presentAllocation.getZLength()).thenReturn(7);
 
-        PssScoreCalculator.Point[][] ground = createGround(transpose(new int[][]{
+        Point[][] ground = createGround(transpose(new int[][]{
                 {1, 0, 0, 2, 0},
                 {9, 0, 0, 9, 0},
                 {0, 0, 0, 3, 3},
                 {0, 0, 1, 4, 3},
                 {0, 0, 0, 1, 2},
         }));
-        SortedSet<PssScoreCalculator.Point> cornerSet = mock(SortedSet.class);
+        SortedSet<Point> cornerSet = mock(SortedSet.class);
         scoreCalculator.place(ground, cornerSet, presentAllocation, 1, 0, 0);
         assertPlacement(transpose(new int[][]{
                 {1, 7, 7, 2, 0},
@@ -169,20 +169,20 @@ public class PssScoreCalculatorTest {
 
     @Test
     public void place_3_2() {
-        PssScoreCalculator scoreCalculator = new PssScoreCalculator();
+        PssSimpleScoreCalculator scoreCalculator = new PssSimpleScoreCalculator();
         PresentAllocation presentAllocation = mock(PresentAllocation.class);
         when(presentAllocation.getXLength()).thenReturn(2);
         when(presentAllocation.getYLength()).thenReturn(3);
         when(presentAllocation.getZLength()).thenReturn(7);
 
-        PssScoreCalculator.Point[][] ground = createGround(transpose(new int[][]{
+        Point[][] ground = createGround(transpose(new int[][]{
                 {1, 0, 0, 2, 1},
                 {9, 0, 0, 9, 0},
                 {9, 0, 1, 3, 3},
                 {1, 0, 2, 4, 3},
                 {0, 0, 0, 1, 2},
         }));
-        SortedSet<PssScoreCalculator.Point> cornerSet = mock(SortedSet.class);
+        SortedSet<Point> cornerSet = mock(SortedSet.class);
         scoreCalculator.place(ground, cornerSet, presentAllocation, 3, 2, 4);
         assertPlacement(transpose(new int[][]{
                 {1, 0, 0, 2, 1},
@@ -206,7 +206,7 @@ public class PssScoreCalculatorTest {
     }
 
     private void assertPlacement(int[][] zGround, int[][] xSpaceEndGround, int[][] ySpaceEndGround,
-            PssScoreCalculator.Point[][] ground) {
+            Point[][] ground) {
         for (int x = 0; x < ground.length; x++) {
             for (int y = 0; y < ground[x].length; y++) {
                 assertEquals(zGround[x][y], ground[x][y].z);
@@ -216,19 +216,18 @@ public class PssScoreCalculatorTest {
         }
     }
 
-    private PssScoreCalculator.Point[][] createGround(int[][] zGround) {
-
-        PssScoreCalculator.Point[][] ground = new PssScoreCalculator.Point[zGround.length][zGround[0].length];
+    private Point[][] createGround(int[][] zGround) {
+        Point[][] ground = new Point[zGround.length][zGround[0].length];
         for (int x = 0; x < zGround.length; x++) {
             for (int y = 0; y < zGround[x].length; y++) {
-                PssScoreCalculator.Point point = new PssScoreCalculator.Point(x, y);
+                Point point = new Point(x, y);
                 point.z = zGround[x][y];
                 point.xSpaceEnd = x + 1;
-                while(point.xSpaceEnd < zGround.length && zGround[point.xSpaceEnd][y] <= point.z) {
+                while (point.xSpaceEnd < zGround.length && zGround[point.xSpaceEnd][y] <= point.z) {
                     point.xSpaceEnd++;
                 }
                 point.ySpaceEnd = y + 1;
-                while(point.ySpaceEnd < zGround[x].length && zGround[x][point.ySpaceEnd] <= point.z) {
+                while (point.ySpaceEnd < zGround[x].length && zGround[x][point.ySpaceEnd] <= point.z) {
                     point.ySpaceEnd++;
                 }
                 ground[x][y] = point;

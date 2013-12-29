@@ -6,7 +6,8 @@
 
   <scoreDirectorFactory>
     <scoreDefinitionType>SIMPLE</scoreDefinitionType>
-    <simpleScoreCalculatorClass>org.optaplannerdelirium.pss.solver.score.PssScoreCalculator</simpleScoreCalculatorClass>
+    <!--<simpleScoreCalculatorClass>org.optaplannerdelirium.pss.solver.score.PssSimpleScoreCalculator</simpleScoreCalculatorClass>-->
+    <incrementalScoreCalculatorClass>org.optaplannerdelirium.pss.solver.score.PssIncrementalScoreCalculator</incrementalScoreCalculatorClass>
   </scoreDirectorFactory>
 
   <!--<termination>-->
