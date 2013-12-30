@@ -17,6 +17,7 @@
 package org.optaplannerdelirium.pss.solver.score;
 
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.junit.Test;
 import org.optaplannerdelirium.pss.domain.PresentAllocation;
@@ -106,7 +107,7 @@ public class PssSimpleScoreCalculatorTest {
                 {0, 0, 1, 4, 3},
                 {0, 0, 0, 1, 2},
         }));
-        SortedSet<Point> cornerSet = mock(SortedSet.class);
+        SortedSet<Point> cornerSet = new TreeSet<Point>();
         scoreCalculator.place(ground, cornerSet, presentAllocation, 0, 0, 1);
         assertPlacement(transpose(new int[][]{
                 {8, 8, 0, 2, 0},
@@ -144,7 +145,7 @@ public class PssSimpleScoreCalculatorTest {
                 {0, 0, 1, 4, 3},
                 {0, 0, 0, 1, 2},
         }));
-        SortedSet<Point> cornerSet = mock(SortedSet.class);
+        SortedSet<Point> cornerSet = new TreeSet<Point>();
         scoreCalculator.place(ground, cornerSet, presentAllocation, 1, 0, 0);
         assertPlacement(transpose(new int[][]{
                 {1, 7, 7, 2, 0},
