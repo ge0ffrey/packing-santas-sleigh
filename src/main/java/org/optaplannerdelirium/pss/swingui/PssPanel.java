@@ -16,18 +16,25 @@
 
 package org.optaplannerdelirium.pss.swingui;
 
+import java.awt.BorderLayout;
+
 import org.optaplanner.core.impl.solution.Solution;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 
 public class PssPanel extends SolutionPanel {
 
+    private Panel3D panel3D;
+
     public PssPanel() {
+        setLayout(new BorderLayout());
+        panel3D = new Panel3D();
+        add(panel3D, BorderLayout.CENTER);
     }
 
     public void resetPanel(Solution solution) {
         Sleigh sleigh = (Sleigh) solution;
-
+        panel3D.setVisualPresentAllocationList(sleigh.getPresentAllocationList().subList(0, 500));
     }
 
 }
