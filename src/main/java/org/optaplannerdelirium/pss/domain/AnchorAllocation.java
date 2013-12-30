@@ -22,6 +22,14 @@ public class AnchorAllocation extends AbstractPersistable implements Allocation 
 
     private PresentAllocation nextPresentAllocation;
 
+    public AnchorAllocation() {
+    }
+
+    public AnchorAllocation(AnchorAllocation originalAnchorAllocation) {
+        id = originalAnchorAllocation.id;
+        nextPresentAllocation = originalAnchorAllocation.nextPresentAllocation;
+    }
+
     public PresentAllocation getNextPresentAllocation() {
         return nextPresentAllocation;
     }

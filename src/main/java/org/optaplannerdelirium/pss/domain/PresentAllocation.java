@@ -39,6 +39,21 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
     private int calculatedY;
     private int calculatedZ;
 
+    public PresentAllocation() {
+    }
+
+    public PresentAllocation(PresentAllocation originalPresentAllocation) {
+        id = originalPresentAllocation.id;
+        present = originalPresentAllocation.present;
+        locked = originalPresentAllocation.locked;
+        rotation = originalPresentAllocation.rotation;
+        previousAllocation = originalPresentAllocation.previousAllocation;
+        nextPresentAllocation = originalPresentAllocation.nextPresentAllocation;
+        calculatedX = originalPresentAllocation.calculatedX;
+        calculatedY = originalPresentAllocation.calculatedY;
+        calculatedZ = originalPresentAllocation.calculatedZ;
+    }
+
     public Present getPresent() {
         return present;
     }

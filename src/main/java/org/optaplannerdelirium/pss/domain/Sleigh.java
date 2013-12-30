@@ -20,17 +20,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
+import org.optaplanner.core.api.domain.solution.cloner.PlanningCloneable;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.simple.SimpleScore;
 import org.optaplanner.core.impl.solution.Solution;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 
 @PlanningSolution
-public class Sleigh extends AbstractPersistable implements Solution<SimpleScore> {
+public class Sleigh extends AbstractPersistable implements Solution<SimpleScore>, PlanningCloneable<Sleigh> {
 
     private List<Present> presentList;
     private AnchorAllocation anchorAllocation;
@@ -97,6 +100,34 @@ public class Sleigh extends AbstractPersistable implements Solution<SimpleScore>
         facts.add(anchorAllocation);
         // Do not add the planning entity's (processList) because that will be done automatically
         return facts;
+    }
+
+    @Override
+    public Sleigh planningClone() {
+        Sleigh clone = new Sleigh();
+        clone.setId(id);
+        clone.setPresentList(presentList);
+        Map<Allocation, Allocation> originalToCloneAllocationMap = new HashMap<Allocation, Allocation>(
+                presentAllocationList.size() + 1);
+        AnchorAllocation clonedAnchorAllocation = new AnchorAllocation(anchorAllocation);
+        clone.setAnchorAllocation(clonedAnchorAllocation);
+        originalToCloneAllocationMap.put(anchorAllocation, clonedAnchorAllocation);
+        List<PresentAllocation> clonedPresentAllocationList = new ArrayList<PresentAllocation>(
+                presentAllocationList.size());
+        for (PresentAllocation presentAllocation : presentAllocationList) {
+            PresentAllocation clonedPresentAllocation = new PresentAllocation(presentAllocation);
+            clonedPresentAllocationList.add(clonedPresentAllocation);
+            originalToCloneAllocationMap.put(presentAllocation, clonedPresentAllocation);
+        }
+        for (PresentAllocation clonedPresentAllocation : clonedPresentAllocationList) {
+            Allocation previousAllocation = clonedPresentAllocation.getPreviousAllocation();
+            Allocation clonedPreviousAllocation = originalToCloneAllocationMap.get(previousAllocation);
+            clonedPresentAllocation.setPreviousAllocation(clonedPreviousAllocation);
+            clonedPreviousAllocation.setNextPresentAllocation(clonedPresentAllocation);
+        }
+        clone.setPresentAllocationList(clonedPresentAllocationList);
+        clone.setScore(score);
+        return clone;
     }
 
 }
