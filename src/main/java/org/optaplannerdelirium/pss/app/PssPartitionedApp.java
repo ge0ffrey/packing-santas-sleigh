@@ -46,16 +46,16 @@ public class PssPartitionedApp extends LoggingMain {
         new PssPartitionedApp().run();
     }
 
-    private int availableTimeInMinutes = 3;
-    private int partitionOffsetIncrement = 100;
-    private int partitionJoinCount = 3;
+    private int availableTimeInMinutes = 600;
+    private int partitionOffsetIncrement = 500;
+    private int partitionJoinCount = 2;
 
     private PssDao pssDao;
     private File unsolvedFile;
 
     public PssPartitionedApp() {
         pssDao = new PssDao();
-        unsolvedFile = new File(pssDao.getDataDir(), "unsolved/subset_1k_presents.planner.csv");
+        unsolvedFile = new File(pssDao.getDataDir(), "unsolved/presents.planner.csv");
     }
 
     public void run() {
@@ -88,6 +88,10 @@ public class PssPartitionedApp extends LoggingMain {
         long availableTimeMillis = (long) availableTimeInMinutes * 60000L;
         // Note: actually it should be less as the non local search phases take time too
         long availableTimeMillisPerPartition = availableTimeMillis / (long) partitionCount;
+        logger.info("Starting partitioned solver with availableTimeMillisPerPartition ({}),"
+                + " partitionOffsetIncrement ({}) and partitionJoinCount ({})"
+                + " in availableTimeInMinutes ({}).",
+                availableTimeMillisPerPartition, partitionOffsetIncrement, partitionJoinCount, availableTimeInMinutes);
 
         List<SolverPhaseConfig> oldSolverPhaseConfigList = solverConfig.getSolverPhaseConfigList();
         if (oldSolverPhaseConfigList.size() != 4) {

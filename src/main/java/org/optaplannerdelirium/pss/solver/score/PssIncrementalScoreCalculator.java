@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import org.optaplanner.core.api.score.buildin.simple.SimpleScore;
 import org.optaplanner.core.impl.score.director.incremental.AbstractIncrementalScoreCalculator;
 import org.optaplannerdelirium.pss.domain.Allocation;
+import org.optaplannerdelirium.pss.domain.AnchorAllocation;
 import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 import org.slf4j.Logger;
@@ -49,7 +50,9 @@ public class PssIncrementalScoreCalculator extends AbstractIncrementalScoreCalcu
         }
         lastLockedAllocation = sleigh.getAnchorAllocation();
         int state = 0;
-        for (PresentAllocation presentAllocation : sleigh.getPresentAllocationList()) {
+        AnchorAllocation anchorAllocation = sleigh.getAnchorAllocation();
+        PresentAllocation presentAllocation = anchorAllocation.getNextPresentAllocation();
+        while (presentAllocation != null) {
             if (presentAllocation.isLocked() && presentAllocation.getRotation() != null) {
                 // Closed
                 if (state > 0) {
@@ -85,6 +88,7 @@ public class PssIncrementalScoreCalculator extends AbstractIncrementalScoreCalcu
                 state = 2;
                 // Do nothing
             }
+            presentAllocation = presentAllocation.getNextPresentAllocation();
         }
         // Refresh spaceEnds
         for (int y = SLEIGH_Y - 1; y >= 0; y--) {
