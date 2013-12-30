@@ -19,6 +19,7 @@ package org.optaplannerdelirium.pss.app;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -30,11 +31,13 @@ import org.optaplanner.core.config.phase.custom.CustomSolverPhaseConfig;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
 import org.optaplanner.core.config.termination.TerminationConfig;
+import org.optaplanner.core.impl.phase.custom.CustomSolverPhaseCommand;
 import org.optaplanner.core.impl.solution.Solution;
 import org.optaplanner.examples.common.app.LoggingMain;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 import org.optaplannerdelirium.pss.persistence.PssDao;
 import org.optaplannerdelirium.pss.persistence.PssExporter;
+import org.optaplannerdelirium.pss.solver.partitioner.EmptyCommand;
 import org.optaplannerdelirium.pss.solver.partitioner.LockingPartitionerConfig;
 
 public class PssPartitionedApp extends LoggingMain {
@@ -94,21 +97,20 @@ public class PssPartitionedApp extends LoggingMain {
                 availableTimeMillisPerPartition, partitionOffsetIncrement, partitionJoinCount, availableTimeInMinutes);
 
         List<SolverPhaseConfig> oldSolverPhaseConfigList = solverConfig.getSolverPhaseConfigList();
-        if (oldSolverPhaseConfigList.size() != 4) {
+        if (oldSolverPhaseConfigList.size() != 3) {
             throw new IllegalStateException("Invalid oldSolverPhaseConfigList size ("
                     + oldSolverPhaseConfigList.size() + ").");
         }
         LockingPartitionerConfig oldLockingPartitionerConfig = (LockingPartitionerConfig) oldSolverPhaseConfigList.get(0);
         CustomSolverPhaseConfig oldInitializerConfig = (CustomSolverPhaseConfig) oldSolverPhaseConfigList.get(1);
         LocalSearchSolverPhaseConfig oldLocalSearchConfig = (LocalSearchSolverPhaseConfig) oldSolverPhaseConfigList.get(2);
-        CustomSolverPhaseConfig oldRefreshCalculatedConfig = (CustomSolverPhaseConfig) oldSolverPhaseConfigList.get(3);
         TerminationConfig oldTerminationConfig = oldLocalSearchConfig.getTerminationConfig();
         if (oldTerminationConfig == null) {
             oldTerminationConfig = new TerminationConfig();
             oldLocalSearchConfig.setTerminationConfig(oldTerminationConfig);
         }
         oldTerminationConfig.setMaximumTimeMillisSpend(availableTimeMillisPerPartition);
-        List<SolverPhaseConfig> newSolverPhaseConfigList = new ArrayList<SolverPhaseConfig>(partitionCount * 3);
+        List<SolverPhaseConfig> newSolverPhaseConfigList = new ArrayList<SolverPhaseConfig>(partitionCount * 3 + 1);
         for (int partitionIndex = 0; partitionIndex < partitionCount; partitionIndex++) {
             LockingPartitionerConfig newLockingPartitionerConfig = new LockingPartitionerConfig();
             newLockingPartitionerConfig.inherit(oldLockingPartitionerConfig);
@@ -123,11 +125,17 @@ public class PssPartitionedApp extends LoggingMain {
             LocalSearchSolverPhaseConfig newLocalSearchConfig = new LocalSearchSolverPhaseConfig();
             newLocalSearchConfig.inherit(oldLocalSearchConfig);
             newSolverPhaseConfigList.add(oldLocalSearchConfig);
-            CustomSolverPhaseConfig newRefreshCalculatedConfig = new CustomSolverPhaseConfig();
-            newRefreshCalculatedConfig.inherit(oldRefreshCalculatedConfig);
-            newSolverPhaseConfigList.add(newRefreshCalculatedConfig);
         }
         solverConfig.setSolverPhaseConfigList(newSolverPhaseConfigList);
+        // refresh the calculated x, y, z
+        // The previous LocalSearch might not have calculated them
+        // OptaPlanner does not calculate the score if it can predict it
+        CustomSolverPhaseConfig finishRefreshCalculatedConfig = new CustomSolverPhaseConfig();
+        finishRefreshCalculatedConfig.setCustomSolverPhaseCommandClassList(
+                (List) Arrays.asList(EmptyCommand.class));
+        finishRefreshCalculatedConfig.setForceUpdateBestSolution(true);
+        newSolverPhaseConfigList.add(finishRefreshCalculatedConfig);
+
         return solverFactory.buildSolver();
     }
 

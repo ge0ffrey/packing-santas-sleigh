@@ -66,9 +66,4 @@
       <!--<acceptedCountLimit>100</acceptedCountLimit>-->
     <!--</forager>-->
   </localSearch>
-  <customSolverPhase>
-    <!-- To refresh the calculated x, y, z (OptaPlanner does not calculate the score if it can predict it) -->
-    <customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.partitioner.EmptyCommand</customSolverPhaseCommandClass>
-    <forceUpdateBestSolution>true</forceUpdateBestSolution>
-  </customSolverPhase>
 </solver>

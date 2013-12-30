@@ -47,6 +47,11 @@ public class LockingPartitioner implements CustomSolverPhaseCommand {
 
     @Override
     public void changeWorkingSolution(ScoreDirector scoreDirector) {
+        // refresh the calculated x, y, z
+        // The previous LocalSearch might not have calculated them
+        // OptaPlanner does not calculate the score if it can predict it
+        scoreDirector.calculateScore();
+
         Sleigh sleigh = (Sleigh) scoreDirector.getWorkingSolution();
         for (PresentAllocation presentAllocation : sleigh.getPresentAllocationList()) {
             Long id = presentAllocation.getId();
