@@ -17,6 +17,14 @@
 package org.optaplannerdelirium.pss.swingui;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.optaplanner.core.impl.solution.Solution;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
@@ -24,17 +32,50 @@ import org.optaplannerdelirium.pss.domain.Sleigh;
 
 public class PssPanel extends SolutionPanel {
 
-    private Panel3D panel3D;
+    private Pss3DPanel pss3DPanel;
+    private JTextField fromIndexField;
+    private JTextField toIndexField;
 
     public PssPanel() {
         setLayout(new BorderLayout());
-        panel3D = new Panel3D();
-        add(panel3D, BorderLayout.CENTER);
+        JPanel northPanel = createNorthPanel();
+        add(northPanel, BorderLayout.NORTH);
+        pss3DPanel = new Pss3DPanel();
+        add(pss3DPanel, BorderLayout.CENTER);
+    }
+
+    private JPanel createNorthPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panel.add(new JLabel("Index from"));
+        fromIndexField = new JTextField("0", 7);
+        panel.add(fromIndexField);
+        panel.add(new JLabel("to"));
+        toIndexField = new JTextField("100", 7);
+        panel.add(toIndexField);
+        JButton refreshButton = new JButton("Refresh");
+        panel.add(refreshButton);
+        ActionListener actionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Sleigh sleigh = (Sleigh) solutionBusiness.getSolution();
+                refreshVisualPresentAllocations(sleigh);
+            }
+        };
+        fromIndexField.addActionListener(actionListener);
+        toIndexField.addActionListener(actionListener);
+        refreshButton.addActionListener(actionListener);
+        return panel;
     }
 
     public void resetPanel(Solution solution) {
         Sleigh sleigh = (Sleigh) solution;
-        panel3D.setVisualPresentAllocationList(sleigh.getPresentAllocationList().subList(0, 500));
+        refreshVisualPresentAllocations(sleigh);
+    }
+
+    public void refreshVisualPresentAllocations(Sleigh sleigh) {
+        int fromIndex = Integer.parseInt(fromIndexField.getText());
+        int toIndex = Integer.parseInt(toIndexField.getText());
+        pss3DPanel.setVisualPresentAllocationList(sleigh.getPresentAllocationList().subList(fromIndex, toIndex));
     }
 
 }

@@ -25,7 +25,11 @@ import javax.swing.JPanel;
 
 import org.optaplannerdelirium.pss.domain.PresentAllocation;
 
-public class Panel3D extends JPanel implements KeyListener {
+/**
+ * Thanks to wleite
+ * https://www.kaggle.com/c/packing-santas-sleigh/forums/t/6579/two-visualizations/36721#post36721
+ */
+public class Pss3DPanel extends JPanel implements KeyListener {
 
     private double alfa = Math.PI / 4;
     private double beta = 0;
@@ -39,7 +43,7 @@ public class Panel3D extends JPanel implements KeyListener {
     private List<PresentAllocation> visualPresentAllocationList = new ArrayList<PresentAllocation>();
     private boolean updated = false;
 
-    public Panel3D() {
+    public Pss3DPanel() {
         alfa += 2 * (Math.PI / 36);
         beta += 10 * (Math.PI / 36);
         updateSinCos();
