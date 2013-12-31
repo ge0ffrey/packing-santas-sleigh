@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.optaplanner.core.config.heuristic.policy.HeuristicConfigPolicy;
 import org.optaplanner.core.config.phase.SolverPhaseConfig;
 import org.optaplanner.core.config.util.ConfigUtils;
@@ -38,6 +39,9 @@ public class LockingPartitionerConfig extends SolverPhaseConfig {
     private Long from = null;
     private Long to = null;
 
+    @XStreamImplicit(itemFieldName = "customSolverPhaseCommandClass")
+    protected List<Class<? extends CustomSolverPhaseCommand>> customSolverPhaseCommandClassList = null;
+
     public Long getFrom() {
         return from;
     }
@@ -54,6 +58,14 @@ public class LockingPartitionerConfig extends SolverPhaseConfig {
         this.to = to;
     }
 
+    public List<Class<? extends CustomSolverPhaseCommand>> getCustomSolverPhaseCommandClassList() {
+        return customSolverPhaseCommandClassList;
+    }
+
+    public void setCustomSolverPhaseCommandClassList(List<Class<? extends CustomSolverPhaseCommand>> customSolverPhaseCommandClassList) {
+        this.customSolverPhaseCommandClassList = customSolverPhaseCommandClassList;
+    }
+
     // ************************************************************************
     // Builder methods
     // ************************************************************************
@@ -65,7 +77,13 @@ public class LockingPartitionerConfig extends SolverPhaseConfig {
         configureSolverPhase(customSolverPhase, phaseIndex, phaseConfigPolicy, solverTermination);
         LockingPartitioner lockingPartitioner = new LockingPartitioner(from, to);
         List<CustomSolverPhaseCommand> customSolverPhaseCommandList
-                = Collections.<CustomSolverPhaseCommand>singletonList(lockingPartitioner);
+                = new ArrayList<CustomSolverPhaseCommand>(customSolverPhaseCommandClassList.size() + 1);
+        customSolverPhaseCommandList.add(lockingPartitioner);
+        for (Class<? extends CustomSolverPhaseCommand> customSolverPhaseCommandClass : customSolverPhaseCommandClassList) {
+            CustomSolverPhaseCommand customSolverPhaseCommand = ConfigUtils.newInstance(this,
+                    "customSolverPhaseCommandClass", customSolverPhaseCommandClass);
+            customSolverPhaseCommandList.add(customSolverPhaseCommand);
+        }
         customSolverPhase.setCustomSolverPhaseCommandList(customSolverPhaseCommandList);
         customSolverPhase.setForceUpdateBestSolution(true);
         return customSolverPhase;
@@ -77,6 +95,8 @@ public class LockingPartitionerConfig extends SolverPhaseConfig {
                 inheritedConfig.getFrom());
         to = ConfigUtils.inheritOverwritableProperty(to,
                 inheritedConfig.getTo());
+        customSolverPhaseCommandClassList = ConfigUtils.inheritMergeableListProperty(
+                customSolverPhaseCommandClassList, inheritedConfig.getCustomSolverPhaseCommandClassList());
     }
 
 

@@ -24,7 +24,7 @@ public interface Allocation {
 
     Long getId();
 
-    @PlanningVariable(mappedBy = "previousAllocation")
+//    @PlanningVariable(mappedBy = "previousAllocation")
     PresentAllocation getNextPresentAllocation();
     void setNextPresentAllocation(PresentAllocation nextPresentAllocation);
 

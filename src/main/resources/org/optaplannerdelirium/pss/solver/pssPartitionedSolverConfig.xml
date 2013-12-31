@@ -3,7 +3,7 @@
   <!--<environmentMode>FULL_ASSERT</environmentMode>-->
   <solutionClass>org.optaplannerdelirium.pss.domain.Sleigh</solutionClass>
   <planningEntityClass>org.optaplannerdelirium.pss.domain.PresentAllocation</planningEntityClass>
-  <planningEntityClass>org.optaplannerdelirium.pss.domain.Allocation</planningEntityClass>
+  <!--<planningEntityClass>org.optaplannerdelirium.pss.domain.Allocation</planningEntityClass>-->
 
   <scoreDirectorFactory>
     <scoreDefinitionType>SIMPLE</scoreDefinitionType>
@@ -20,13 +20,10 @@
   <lockingPartitionerConfig>
     <from>0</from>
     <to>100</to>
-  </lockingPartitionerConfig>
-  <customSolverPhase>
     <!--<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.NoRotator</customSolverPhaseCommandClass>-->
     <customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.ZXYRotator</customSolverPhaseCommandClass>
     <!--<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.XYZRotator</customSolverPhaseCommandClass>-->
-    <forceUpdateBestSolution>true</forceUpdateBestSolution>
-  </customSolverPhase>
+  </lockingPartitionerConfig>
   <localSearch>
     <unionMoveSelector>
       <changeMoveSelector>

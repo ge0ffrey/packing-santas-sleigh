@@ -79,7 +79,7 @@ public class PresentAllocation extends AbstractPersistable implements Allocation
         this.rotation = rotation;
     }
 
-    @PlanningVariable(chained = true, valueRangeProviderRefs = {"anchorAllocationRange", "presentAllocationRange"})
+//    @PlanningVariable(chained = true, valueRangeProviderRefs = {"anchorAllocationRange", "presentAllocationRange"})
     public Allocation getPreviousAllocation() {
         return previousAllocation;
     }
