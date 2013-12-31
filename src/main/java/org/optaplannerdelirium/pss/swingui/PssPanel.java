@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -28,6 +29,7 @@ import javax.swing.JTextField;
 
 import org.optaplanner.core.impl.solution.Solution;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
+import org.optaplannerdelirium.pss.domain.PresentAllocation;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 
 public class PssPanel extends SolutionPanel {
@@ -67,6 +69,11 @@ public class PssPanel extends SolutionPanel {
         return panel;
     }
 
+    @Override
+    public boolean isRefreshScreenDuringSolving() {
+        return true;
+    }
+
     public void resetPanel(Solution solution) {
         Sleigh sleigh = (Sleigh) solution;
         refreshVisualPresentAllocations(sleigh);
@@ -75,7 +82,8 @@ public class PssPanel extends SolutionPanel {
     public void refreshVisualPresentAllocations(Sleigh sleigh) {
         int fromIndex = Integer.parseInt(fromIndexField.getText());
         int toIndex = Integer.parseInt(toIndexField.getText());
-        pss3DPanel.setVisualPresentAllocationList(sleigh.getPresentAllocationList().subList(fromIndex, toIndex));
+        pss3DPanel.setVisualPresentAllocationList(new ArrayList<PresentAllocation>(
+                sleigh.getPresentAllocationList().subList(fromIndex, toIndex)));
     }
 
 }
