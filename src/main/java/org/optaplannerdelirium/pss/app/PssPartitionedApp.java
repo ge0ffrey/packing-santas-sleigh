@@ -37,7 +37,6 @@ import org.optaplanner.examples.common.app.LoggingMain;
 import org.optaplannerdelirium.pss.domain.Sleigh;
 import org.optaplannerdelirium.pss.persistence.PssDao;
 import org.optaplannerdelirium.pss.persistence.PssExporter;
-import org.optaplannerdelirium.pss.solver.partitioner.EmptyCommand;
 import org.optaplannerdelirium.pss.solver.partitioner.LockingPartitionerConfig;
 
 public class PssPartitionedApp extends LoggingMain {
@@ -49,7 +48,7 @@ public class PssPartitionedApp extends LoggingMain {
         new PssPartitionedApp().run();
     }
 
-    private int availableTimeInMinutes = 900;
+    private int availableTimeInMinutes = 3;
     private int partitionOffsetIncrement = 500;
     private int partitionJoinCount = 2;
 
@@ -58,7 +57,7 @@ public class PssPartitionedApp extends LoggingMain {
 
     public PssPartitionedApp() {
         pssDao = new PssDao();
-        unsolvedFile = new File(pssDao.getDataDir(), "unsolved/presents.planner.csv");
+        unsolvedFile = new File(pssDao.getDataDir(), "unsolved/subset_10k_presents.planner.csv");
     }
 
     public void run() {
@@ -123,14 +122,6 @@ public class PssPartitionedApp extends LoggingMain {
             newSolverPhaseConfigList.add(oldLocalSearchConfig);
         }
         solverConfig.setSolverPhaseConfigList(newSolverPhaseConfigList);
-        // refresh the calculated x, y, z
-        // The previous LocalSearch might not have calculated them
-        // OptaPlanner does not calculate the score if it can predict it
-        CustomSolverPhaseConfig finishRefreshCalculatedConfig = new CustomSolverPhaseConfig();
-        finishRefreshCalculatedConfig.setCustomSolverPhaseCommandClassList(
-                (List) Arrays.asList(EmptyCommand.class));
-        finishRefreshCalculatedConfig.setForceUpdateBestSolution(true);
-        newSolverPhaseConfigList.add(finishRefreshCalculatedConfig);
 
         return solverFactory.buildSolver();
     }

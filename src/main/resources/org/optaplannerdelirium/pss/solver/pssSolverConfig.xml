@@ -26,48 +26,37 @@
     <!--<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.ZXYRotator</customSolverPhaseCommandClass>-->
     <!--&lt;!&ndash;<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.XYZRotator</customSolverPhaseCommandClass>&ndash;&gt;-->
   <!--</lockingPartitionerConfig>-->
-  <!--<localSearch>-->
-    <!--<unionMoveSelector>-->
+  <localSearch>
+    <unionMoveSelector>
+      <changeMoveSelector>
+        <entitySelector>
+          <cacheType>PHASE</cacheType>
+        </entitySelector>
+        <valueSelector>
+          <variableName>rotation</variableName>
+        </valueSelector>
+      </changeMoveSelector>
       <!--<changeMoveSelector>-->
         <!--<entitySelector>-->
           <!--<cacheType>PHASE</cacheType>-->
         <!--</entitySelector>-->
         <!--<valueSelector>-->
-          <!--<variableName>rotation</variableName>-->
+          <!--<variableName>previousAllocation</variableName>-->
         <!--</valueSelector>-->
       <!--</changeMoveSelector>-->
-      <!--&lt;!&ndash;<changeMoveSelector>&ndash;&gt;-->
-        <!--&lt;!&ndash;<entitySelector>&ndash;&gt;-->
-          <!--&lt;!&ndash;<cacheType>PHASE</cacheType>&ndash;&gt;-->
-        <!--&lt;!&ndash;</entitySelector>&ndash;&gt;-->
-        <!--&lt;!&ndash;<valueSelector>&ndash;&gt;-->
-          <!--&lt;!&ndash;<variableName>previousAllocation</variableName>&ndash;&gt;-->
-        <!--&lt;!&ndash;</valueSelector>&ndash;&gt;-->
-      <!--&lt;!&ndash;</changeMoveSelector>&ndash;&gt;-->
-      <!--&lt;!&ndash;<subChainChangeMoveSelector>&ndash;&gt;-->
-        <!--&lt;!&ndash;<subChainSelector>&ndash;&gt;-->
-          <!--&lt;!&ndash;<maximumSubChainSize>20</maximumSubChainSize>&ndash;&gt;-->
-        <!--&lt;!&ndash;</subChainSelector>&ndash;&gt;-->
-        <!--&lt;!&ndash;<selectReversingMoveToo>false</selectReversingMoveToo>&ndash;&gt;-->
-      <!--&lt;!&ndash;</subChainChangeMoveSelector>&ndash;&gt;-->
-    <!--</unionMoveSelector>-->
-    <!--<acceptor>-->
-      <!--<lateAcceptanceSize>10</lateAcceptanceSize>-->
-    <!--</acceptor>-->
-    <!--<forager>-->
-      <!--<acceptedCountLimit>1</acceptedCountLimit>-->
-    <!--</forager>-->
-    <!--&lt;!&ndash;<acceptor>&ndash;&gt;-->
-      <!--&lt;!&ndash;<entityTabuSize>10</entityTabuSize>&ndash;&gt;-->
-    <!--&lt;!&ndash;</acceptor>&ndash;&gt;-->
-    <!--&lt;!&ndash;<forager>&ndash;&gt;-->
-      <!--&lt;!&ndash;<pickEarlyType>FIRST_LAST_STEP_SCORE_IMPROVING</pickEarlyType>&ndash;&gt;-->
-      <!--&lt;!&ndash;<acceptedCountLimit>100</acceptedCountLimit>&ndash;&gt;-->
-    <!--&lt;!&ndash;</forager>&ndash;&gt;-->
-  <!--</localSearch>-->
-  <customSolverPhase>
-    <!-- To refresh the calculated x, y, z (OptaPlanner does not calculate the score if it can predict it) -->
-    <customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.partitioner.EmptyCommand</customSolverPhaseCommandClass>
-    <forceUpdateBestSolution>true</forceUpdateBestSolution>
-  </customSolverPhase>
+      <!--<subChainChangeMoveSelector>-->
+        <!--<subChainSelector>-->
+          <!--<maximumSubChainSize>20</maximumSubChainSize>-->
+        <!--</subChainSelector>-->
+        <!--<selectReversingMoveToo>false</selectReversingMoveToo>-->
+      <!--</subChainChangeMoveSelector>-->
+    </unionMoveSelector>
+    <acceptor>
+      <lateAcceptanceSize>10</lateAcceptanceSize>
+    </acceptor>
+    <forager>
+      <!-- The must be 1 to have a correct calculated x, y, z, because OptaPlanner does not calculate the score if it can predict it -->
+      <acceptedCountLimit>1</acceptedCountLimit>
+    </forager>
+  </localSearch>
 </solver>
