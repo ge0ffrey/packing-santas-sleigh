@@ -21,8 +21,8 @@
     <from>0</from>
     <to>100</to>
     <!--<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.NoRotator</customSolverPhaseCommandClass>-->
-    <customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.ZXYRotator</customSolverPhaseCommandClass>
-    <!--<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.XYZRotator</customSolverPhaseCommandClass>-->
+    <!--<customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.ZXYRotator</customSolverPhaseCommandClass>-->
+    <customSolverPhaseCommandClass>org.optaplannerdelirium.pss.solver.initializer.XYZRotator</customSolverPhaseCommandClass>
   </lockingPartitionerConfig>
   <localSearch>
     <unionMoveSelector>

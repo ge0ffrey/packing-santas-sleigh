@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.optaplannerdelirium.pss.domain.PresentAllocation;
 
 /**
@@ -176,34 +177,15 @@ public class Pss3DPanel extends JPanel implements KeyListener {
     public void update() {
         Collections.sort(visualPresentAllocationList, new Comparator<PresentAllocation>() {
             public int compare(PresentAllocation a, PresentAllocation b) {
-                if (a.getRotation() == null && b.getRotation() == null) {
-                    return a.getId() < b.getId() ? -1 : a.getId() > b.getId() ? 1 : 0;
-                } else if (a.getRotation() == null) {
-                    return -1;
-                } else if (b.getRotation() == null) {
-                    return 1;
-                }
-                if (a.getCalculatedX() >= b.getCalculatedX() + b.getXLength()) {
-                    return 1;
-                }
-                if (b.getCalculatedX() >= a.getCalculatedX() + a.getXLength()) {
-                    return -1;
-                }
-
-                if (a.getCalculatedY() >= b.getCalculatedY() + b.getYLength()) {
-                    return 1;
-                }
-                if (b.getCalculatedY() >= a.getCalculatedY() + a.getYLength()) {
-                    return -1;
-                }
-
-                if (a.getCalculatedZ() >= b.getCalculatedZ() + b.getZLength()) {
-                    return 1;
-                }
-                if (b.getCalculatedZ() >= a.getCalculatedZ() + a.getZLength()) {
-                    return -1;
-                }
-                return 0;
+                return new CompareToBuilder()
+                        .append(a.getRotation() == null, b.getRotation() == null)
+                        .append(a.getCalculatedX() + a.getXLength() + a.getCalculatedY() + a.getYLength() + a.getCalculatedZ() + a.getZLength(),
+                                b.getCalculatedX() + b.getXLength() + b.getCalculatedY() + b.getYLength() + b.getCalculatedZ() + b.getZLength())
+                        .append(a.getCalculatedX() + a.getXLength() + a.getCalculatedY() + a.getYLength(),
+                                b.getCalculatedX() + b.getXLength() + b.getCalculatedY() + b.getYLength())
+                        .append(a.getCalculatedX() + a.getXLength(),
+                                b.getCalculatedX() + b.getXLength())
+                        .toComparison();
             }
         });
         updated = true;

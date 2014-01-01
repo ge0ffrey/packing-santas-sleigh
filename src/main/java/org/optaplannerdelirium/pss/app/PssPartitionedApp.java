@@ -127,8 +127,10 @@ public class PssPartitionedApp extends LoggingMain {
     }
 
     private void writeBestSolution(Solution bestSolution) {
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
-        String filename = FilenameUtils.getBaseName(unsolvedFile.getName()) + "_" + timestamp;
+        // String timestamp = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
+        String filename = FilenameUtils.getBaseName(FilenameUtils.getBaseName(unsolvedFile.getName()))
+                + "_" + availableTimeInMinutes + "m_" + partitionOffsetIncrement + "-" + partitionJoinCount
+                + "_score" + bestSolution.getScore().toString().replace("/", "_");
         File solvedFile = new File(pssDao.getDataDir(), "solved/" + filename + "." + pssDao.getFileExtension());
         pssDao.writeSolution(bestSolution, solvedFile);
         PssExporter pssExporter = new PssExporter();
